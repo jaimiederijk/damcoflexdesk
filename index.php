@@ -1,9 +1,76 @@
 <?php
+  $servername = "localhost";
+  $username = "root";
+  $password = "damcosecret";
+  $dbname = "damco";
 
-  $calenderJson= file_get_contents("https://calendar.google.com/calendar/ical/jaimiedegiantrijk%40gmail.com/private-2fcab5e98afb38061fdae47a15effece/basic.ics");  
+  $currentDate = date("d-m-Y");
   $currentShortDate = date("Ymd");
+   
+  $searchArray = array("vacation","home","thuis");
 
-  function mb_stripos_all($haystack, $needle) {
+  $numberOfPeople = 0;
+  $fixexdeskNotPresent = 0;
+
+  // Create connection
+  $conn = new mysqli($servername, $username, $password, $dbname);
+
+  // Check connection
+  if ($conn->connect_error) {
+      die("Connection failed: " . $conn->connect_error);
+  } 
+
+  $sql = "SELECT * FROM deskusers";
+  $result = $conn->query($sql);
+
+  $numberOfPeople = $result->num_rows;
+
+  if ($numberOfPeople > 0) {
+      // output data of each row
+      while($row = $result->fetch_assoc()) { //users
+        if ($row["defaultpresent"]==1) { // desk user is normaly present
+          $positves = 0 ;
+
+          $posPerCal = searchOneUserCalendar($row, $conn,$currentShortDate,$searchArray);
+          if ($posPerCal>0) {
+            $positves+=1; //add 1 to positive per user per cal
+          }
+
+          if ($positves>0 && $row["fixed"] == 0) { //user cal contains positives so min one to the number of people comming
+            $numberOfPeople-=1;
+          } else if ($positves>0 && $row["fixed"] == 1) {
+            $fixexdeskNotPresent +=1;
+          }
+        } else { //deskuser is not normaly present
+          $numberOfPeople-=1;
+
+
+        }
+          
+      }
+  } else {
+      echo "no desk user exist yet";
+
+  }
+
+  function searchOneUserCalendar($row, $conn , $currentShortDate , $searchArray) {
+      $sql2 = "SELECT url FROM `calendars` WHERE deskuser_id = ".$row["deskuser_id"] ." ";//get urls that belong to this user
+      $result2 = $conn->query($sql2);
+      if ($result2->num_rows > 0) { //loop through arrays
+        // output data of each row
+        while($row2 = $result2->fetch_assoc()) {
+          $calenderJson= file_get_contents($row2["url"]);
+
+          $datePositions = mb_stripos_all($calenderJson, "DTSTART:".$currentShortDate); // find all position with the date
+
+          $posPerCal = searchCalendar($datePositions,$calenderJson,$searchArray); // return number of positves in one calendar
+          return $posPerCal;
+        } 
+      }
+  }
+  
+
+  function mb_stripos_all($haystack, $needle) {// find all occurrences(case-insensitive) substring in a string. 
     //echo $haystack;
     //echo $needle;
     $s = 0;
@@ -53,12 +120,24 @@
     return $trueResult;
   }
 
-  $searchArray = array("vacation","home","thuis");
-  $datePositions = mb_stripos_all($calenderJson, "DTSTART:".$currentShortDate);
   
-  $currentDate = date("d-m-Y");
-  $numberOfDesk = 40; 
-  $numberOfPeople = searchCalendar($datePositions,$calenderJson,$searchArray);
+  
+  
+  
+  $numberOfDesk = 1;
+  $sql4 = "SELECT desks FROM flexdesk_settings WHERE settings_id = 1 ";
+  $result4 = $conn->query($sql4);
+  if ($result4->num_rows > 0) {
+      // output data of each row
+      while($row4 = $result4->fetch_assoc()) {
+          $numberOfDesk = $row4["desks"];
+      }
+  } else {
+      echo "no number of desk specified";
+  }
+  $numberOfDesk += $fixexdeskNotPresent;
+        
+  
 
 
 // foreach($datePositions as $x => $x_value) {
@@ -82,7 +161,7 @@
 
       <header>
         <h1>Flexdesk occupancy </h1>
-        <nav><a href="/settings">Settings<img src="images/gear_icon.svg"></a></nav>
+        <nav><a href="settings.php">Settings<img src="images/gear_icon.svg"></a></nav>
       </header>
       
       <section class="date">

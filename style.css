@@ -54,3 +54,33 @@ nav {
 img {
 	height: 1em;
 }
+.userinfo span {
+	    background-color: #0A5AAD;
+    border: 1px solid;
+    padding: 1rem;
+}
+.userinfo {
+	display: flex;
+    color: #FFFFFF;
+
+    justify-content: flex-start;
+    padding: 1rem;
+}
+.settings {
+	width: 80%;
+    margin: auto;
+}
+li {
+	list-style-type: none;
+}
+li > span {
+	background-color: #04447C;
+    color: white;
+    width: 30%;
+    display: block;
+    padding: 1rem;
+    border: 1px solid;
+}
+/*.hidden {
+	display: none;
+}*/

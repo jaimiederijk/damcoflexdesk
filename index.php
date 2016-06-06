@@ -59,7 +59,10 @@
       if ($result2->num_rows > 0) { //loop through arrays
         // output data of each row
         while($row2 = $result2->fetch_assoc()) {
-          $calenderJson= file_get_contents($row2["url"]);
+          $calenderJson= @file_get_contents($row2["url"]);
+          if ($calenderJson===FALSE) {
+            $calenderJson= file_get_contents("calbackup.ics");
+          }
 
           $datePositions = mb_stripos_all($calenderJson, "DTSTART:".$currentShortDate); // find all position with the date
 

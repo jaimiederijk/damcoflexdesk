@@ -204,24 +204,24 @@
           </ul>
         <h2>Add desk user</h2>
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" >
-          Name: <input type="text" name="name"><span class="error">* <?php echo $nameErr;?></span><br>
+          <label> Name: <input type="text" name="name"><span class="error">* <?php echo $nameErr;?></span></label><br>
 
-          Default at the office:<input type="checkbox" name="defaultpresent" value="1" checked><span class="error"></span><br>
+          <label> Default at the office:<input type="checkbox" name="defaultpresent" value="1" checked><span class="error"></span></label><br>
 
-          fixed desk: <input type="checkbox" name="fixed" value="1" ><span class="error"></span><br>
+          <label> fixed desk: <input type="checkbox" name="fixed" value="1" ><span class="error"></span></label><br>
 
-          E-mail: <input type="text" name="email"><span class="error">* <?php echo $emailErr;?></span><br>
+          <label> E-mail: <input type="text" name="email"><span class="error">* <?php echo $emailErr;?></span></label><br>
 
-          Calendar: <input type="text" name="calendar"><span class="error">* <?php echo $calendarErr;?></span><br>
+          <label> Calendar: <input type="text" name="calendar"><span class="error">* <?php echo $calendarErr;?></span></label><br>
 
-          <input type="submit" name="deskuser" value="Add desk user">
+          <label> <input type="submit" name="deskuser" value="Add desk user"></label>
         </form>
         <!-- <h2>default present</h2> -->
         <h2>App settings</h2>
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" >
-          Number of desks: <input type="number" name="desks"><span class="error">* <?php echo $deskErr;?></span><br>
+          <label> Number of desks: <input type="number" name="desks"><span class="error">* <?php echo $deskErr;?></span></label><br>
 
-          <input type="submit" name="numOfDesks" value="Change Number">
+          <label> <input type="submit" name="numOfDesks" value="Change Number"></label>
         </form>
       </section> 
     </div>

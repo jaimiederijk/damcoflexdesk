@@ -84,14 +84,15 @@
               echo "New record created successfully";
               $last_id = $conn->insert_id;
 
-              $sql3 = "INSERT INTO calendars (deskuser_id, url)
-              VALUES ('".$last_id."','" .$calendar. "')";
-              if ($conn->query($sql3) === TRUE) {
-                header("Location: {$_SERVER['PHP_SELF']}");
-              }
-              else {
-                echo "Error" . $conn->error;
-              }
+              addCalendar($conn,$last_id,$calendar);
+              // $sql3 = "INSERT INTO calendars (deskuser_id, url)
+              // VALUES ('".$last_id."','" .$calendar. "')";
+              // if ($conn->query($sql3) === TRUE) {
+              //   header("Location: {$_SERVER['PHP_SELF']}");
+              // }
+              // else {
+              //   echo "Error" . $conn->error;
+              // }
               
           } else {
               echo "Error: " . $sql2 . "<br>" . $conn->error;
@@ -123,8 +124,39 @@
       }
       
     }
+    if (!empty($_POST["changeFixed"])) {
+      $fixedUserId = $_POST["userId"];
 
+      changeFixed($conn,$fixedUserId);
+    }
+    if (!empty($_POST["addCal"])) {
+      $calUserId = $_POST["userId"];
+      $addCalUrl = $_POST["addCal"];
 
+      addCalendar($conn,$calUserId,$addCalUrl);
+    }
+
+  }
+  function changeFixed($conn,$userId) {
+
+    $sql = "UPDATE deskusers SET fixed = !fixed WHERE deskusers. deskuser_id =".$userId;
+    if ($conn->query($sql) === TRUE) {
+      header("Location: {$_SERVER['PHP_SELF']}");
+      //echo "New record created successfully";
+    } else {
+      echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+  }  
+  function addCalendar($conn,$userId,$calendar) {
+
+    $sql = "INSERT INTO calendars (deskuser_id, url)
+    VALUES ('".$userId."','" .$calendar. "')";
+    if ($conn->query($sql) === TRUE) {
+      header("Location: {$_SERVER['PHP_SELF']}");
+    }
+    else {
+      echo "Error" . $conn->error;
+    }
   }
 
   function test_input($data) {
@@ -181,6 +213,7 @@
               <th>Name</th>
               <th>E-mail</th>
               <th>Fixed desk</th>
+              <th>Add calendar url</th>
             </tr>
              <?php
 
@@ -195,13 +228,28 @@
                     } else {
                       $showFixed = "false";
                     }
-                    
-                    
+                    $name = $row["name"];
+                    $email = $row["email"];
+                    $action = htmlspecialchars($_SERVER["PHP_SELF"]);
+                    $userId = $row["deskuser_id"];
+
+                    $calendar = "";
+
+                    $sqlCal = "SELECT * FROM calendars WHERE deskuser_id=". $userId;
+                    $resultCal = $conn->query($sqlCal);
+                    if ($resultCal->num_rows > 0) {
+                      while ( $rowCal = $resultCal->fetch_assoc()) {
+                        $calendar=$calendar. "<td class='tdcal'>".$rowCal["url"]."</td>";
+                      }
+                    }
+                     
                       echo <<<HTML
                       <tr>
-                          <td>"fff"</td>
-                          <td>$row['email']</td>
-                         
+                          <td>$name</td>
+                          <td>$email</td>
+                          <td class=$showFixed>$showFixed <form method="post" action=$action>  <input type="hidden" name="userId" value=$userId><input type="submit" name="changeFixed" value="change"></form></td>
+                          <td><form method="post" action=$action>  <input type="hidden" name="userId" value=$userId><input type="text" name="addCal"><input type="submit" name="changeFixed" value="submit"></form></td>
+                          $calendar
                         </tr>
 HTML;
                   }

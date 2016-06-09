@@ -345,7 +345,7 @@ class ICal
     public function process_recurrences()
     {
         $array = $this->cal;
-        $events = $array['VEVENT'];
+        $events = @$array['VEVENT'];
         if (empty($events))
             return false;
         foreach ($array['VEVENT'] as $anEvent) {
@@ -620,7 +620,7 @@ class ICal
     public function events()
     {
         $array = $this->cal;
-        return $array['VEVENT'];
+        return @$array['VEVENT'];
     }
 
     /**

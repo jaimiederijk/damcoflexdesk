@@ -1,4 +1,13 @@
 <?php
+  /**
+   *
+   * @package  ics-parser
+   * @author   Martin Thoma <info@martin-thoma.de>
+   * @license  http://www.opensource.org/licenses/mit-license.php MIT License
+   * @link     https://github.com/MartinThoma/ics-parser/
+   */
+  require 'php/class.iCalReader.php';
+
   $servername = "localhost";
   $username = "root";
   $password = "damcosecret";
@@ -43,8 +52,6 @@
           }
         } else { //deskuser is not normaly present
           $numberOfPeople-=1;
-
-
         }
           
       }
@@ -59,73 +66,55 @@
       if ($result2->num_rows > 0) { //loop through arrays
         // output data of each row
         while($row2 = $result2->fetch_assoc()) {
-          $calenderJson= @file_get_contents($row2["url"]);
-          if ($calenderJson===FALSE) {
-            $calenderJson= file_get_contents("calbackup.ics");
+
+            $ical   = new ICal($row2["url"]);
+            $events = $ical->events();
+
+          $datePositions = findEventsWithDate($events, $currentShortDate); // find all events with the date
+
+          $posPerCal = searchCalendar($datePositions,$events,$searchArray); // return number of positves in one calendar
+
+          if ($posPerCal>0) {
+            return $posPerCal;
           }
-
-          $datePositions = mb_stripos_all($calenderJson, "DTSTART:".$currentShortDate); // find all position with the date
-
-          $posPerCal = searchCalendar($datePositions,$calenderJson,$searchArray); // return number of positves in one calendar
-          return $posPerCal;
+          
         } 
       }
   }
   
+  function findEventsWithDate($events,$date) {
+    $eventsLength=count($events);
+    $results = array();
 
-  function mb_stripos_all($haystack, $needle) {// find all occurrences(case-insensitive) substring in a string. 
-    //echo $haystack;
-    //echo $needle;
-    $s = 0;
-    $i = 0;
-   
-    while(is_integer($i)) {
-   
-      $i = mb_stripos($haystack, $needle, $s);
-   
-      if(is_integer($i)) {
-        $aStrPos[] = $i;
-        $s = $i + mb_strlen($needle);
+    for ($i=0; $i < $eventsLength; $i++) { 
+      if (mb_stripos($events[$i]['DTSTART'],$date) !== false) {
+        array_push($results, $i);
       }
     }
-   
-    if(isset($aStrPos)) {
-      
-      return $aStrPos;
+    return $results;
+  }  
 
-    } else {
-      return false;
-    }
-  }
 
-  function searchCalendar($datePositions,$calenderJson,$searchArray) {
+  function searchCalendar($datePositions,$events,$searchArray) {
    
     $arrlength = count($datePositions);
     $trueResult = 0;
 
-    for($x=0; $x < $arrlength; $x++) {
-      $subString = substr($calenderJson,$datePositions[$x],300) ;
+    for($x=0; $x < $arrlength; $x++) { //foreach event on this date
 
 
-      $searchLength = count($searchArray);
+      $searchLength = count($searchArray); //for each searchterm
       for ($i=0; $i < $searchLength; $i++) { 
-        if (stristr($subString,$searchArray[$i])) {
-          // echo $subString;
-          // echo "<br>";
-          // echo "<br>";
+        if (mb_stripos($events[$datePositions[$x]]['SUMMARY'],$searchArray[$i]) !== false) {
           $trueResult+=1;
         }
       }
-      // echo $subString; 
-      // echo "<br>";
 
     }
     return $trueResult;
   }
 
-  
-  
-  
+
   
   $numberOfDesk = 1;
   $sql4 = "SELECT desks FROM flexdesk_settings WHERE settings_id = 1 ";
@@ -141,12 +130,6 @@
   $numberOfDesk += $fixexdeskNotPresent;
         
   
-
-
-// foreach($datePositions as $x => $x_value) {
-//                 echo "Key=" . $x . ", Value=" . $x_value;
-//                 echo "<br>";
-//             }
        
 ?>
 

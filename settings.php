@@ -129,11 +129,18 @@
 
       changeFixed($conn,$fixedUserId);
     }
-    if (!empty($_POST["addCal"])) {
+    if (!empty($_POST["submitAddCal"])) {
       $calUserId = $_POST["userId"];
-      $addCalUrl = $_POST["addCal"];
+      $addCalUrl = test_input($_POST["addCal"]);
 
-      addCalendar($conn,$calUserId,$addCalUrl);
+          // check if URL address syntax is valid (this regular expression also allows dashes in the URL)
+      if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i",$addCalUrl)) {
+        $calendarErr = "Invalid URL"; 
+        //$errorBoal = true;
+      } else {
+        addCalendar($conn,$calUserId,$addCalUrl);
+      }
+      
     }
 
   }
@@ -248,7 +255,7 @@
                           <td>$name</td>
                           <td>$email</td>
                           <td class=$showFixed>$showFixed <form method="post" action=$action>  <input type="hidden" name="userId" value=$userId><input type="submit" name="changeFixed" value="change"></form></td>
-                          <td><form method="post" action=$action>  <input type="hidden" name="userId" value=$userId><input type="text" name="addCal"><input type="submit" name="changeFixed" value="submit"></form></td>
+                          <td><form method="post" action=$action>  <input type="hidden" name="userId" value=$userId><input type="text" name="addCal"><span class="error">*$calendarErr</span><input type="submit" name="submitAddCal" value="submit"></form></td>
                           $calendar
                         </tr>
 HTML;

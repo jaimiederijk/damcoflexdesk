@@ -173,56 +173,68 @@
         
       </section>
       <section class="settings">
+        <section>
         <h1>Desk users </h1>
-          <ul>
-          <?php
+          <table>
+            
+            <tr>
+              <th>Name</th>
+              <th>E-mail</th>
+              <th>Fixed desk</th>
+            </tr>
+             <?php
 
-            $sql = "SELECT * FROM deskusers";
-            $result = $conn->query($sql);
-            $numberOfPeople = $result->num_rows;
-            if ($result->num_rows > 0) {
-                // output data of each row
-                while($row = $result->fetch_assoc()) {
-                  if ($row["fixed"]==1) {
-                    $showFixed = "true";
-                  } else {
-                    $showFixed = "false";
+              $sql = "SELECT * FROM deskusers";
+              $result = $conn->query($sql);
+              $numberOfPeople = $result->num_rows;
+              if ($result->num_rows > 0) {
+                  // output data of each row
+                  while($row = $result->fetch_assoc()) {
+                    if ($row["fixed"]==1) {
+                      $showFixed = "true";
+                    } else {
+                      $showFixed = "false";
+                    }
+                    
+                    
+                      echo <<<HTML
+                      <tr>
+                          <td>"fff"</td>
+                          <td>$row['email']</td>
+                         
+                        </tr>
+HTML;
                   }
-                  if ($row["defaultpresent"]==1) {
-                    $showDefault = "true";
-                  } else {
-                    $showDefault = "false";
-                  }
-                  
-                    echo "<li><span>".$row["name"]. "</span><div class='hidden userinfo'><span>E-mail: ". $row["email"] ."</span> <span>fixed: ". $showFixed ."</span> <span>Default at the office: ". $showDefault ."</span></div></li>";
-                }
-            } else {
-                echo "no desk user exist yet";
-            }
+              } else {
+                  echo "no desk user exist yet";
+              }
 
-          ?>
-          </ul>
-        <h2>Add desk user</h2>
-        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" >
-          <label> Name: <input type="text" name="name"><span class="error">* <?php echo $nameErr;?></span></label><br>
+            ?>
+          </table>
+        </section>
+        <section>
+          <h2>Add desk user</h2>
+          <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" >
+            <label> Name: <input type="text" name="name"><span class="error">* <?php echo $nameErr;?></span></label><br>
 
-          <label> Default at the office:<input type="checkbox" name="defaultpresent" value="1" checked><span class="error"></span></label><br>
+            <!-- <label> Default at the office:<input type="checkbox" name="defaultpresent" value="1" checked><span class="error"></span></label><br> -->
 
-          <label> fixed desk: <input type="checkbox" name="fixed" value="1" ><span class="error"></span></label><br>
+            <label> fixed desk: <input type="checkbox" name="fixed" value="1" ><span class="error"></span></label><br>
 
-          <label> E-mail: <input type="text" name="email"><span class="error">* <?php echo $emailErr;?></span></label><br>
+            <label> E-mail: <input type="text" name="email"><span class="error">* <?php echo $emailErr;?></span></label><br>
 
-          <label> Calendar: <input type="text" name="calendar"><span class="error">* <?php echo $calendarErr;?></span></label><br>
+            <label> Calendar: <input type="text" name="calendar"><span class="error">* <?php echo $calendarErr;?></span></label><br>
 
-          <label> <input type="submit" name="deskuser" value="Add desk user"></label>
-        </form>
-        <!-- <h2>default present</h2> -->
-        <h2>App settings</h2>
-        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" >
-          <label> Number of desks: <input type="number" name="desks"><span class="error">* <?php echo $deskErr;?></span></label><br>
+            <label> <input type="submit" name="deskuser" value="Add desk user"></label>
+          </form>
+          <!-- <h2>default present</h2> -->
+          <h2>App settings</h2>
+          <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" >
+            <label> Number of desks: <input type="number" name="desks"><span class="error">* <?php echo $deskErr;?></span></label><br>
 
-          <label> <input type="submit" name="numOfDesks" value="Change Number"></label>
-        </form>
+            <label> <input type="submit" name="numOfDesks" value="Change Number"></label>
+          </form>
+        </section>
       </section> 
     </div>
   </body>

@@ -20,7 +20,7 @@
   $numberOfPeople = $result->num_rows;
 
 
-  $nameErr = $emailErr = $calendarErr = $deskErr = "";
+  $nameErr = $emailErr = $calendarErr = $deskErr = $termErr = "";
   $name = $email = $fixed = $defaultpresent = $calendar = "";
   $errorBoal = false;
 
@@ -142,8 +142,43 @@
       }
       
     }
+    if (!empty($_POST["removeterm"])) {
+      $termid = $_POST["termId"];
+      $table = "searchterms";
+      $pkey = "searchterm_id";
+      removeRow($conn,$table,$termid,$pkey);
+    }
+    if (!empty($_POST["submitAddTerm"])) {
+      //$term = test_input($_POST["term"]);
+
+        if (empty($_POST["term"])) {
+          $termErr = "term is required";
+          //$errorBoal = true;
+        } else {
+          $term = test_input($_POST["term"]);
+          if (!preg_match("/^[a-zA-Z ]*$/",$term)) {
+            $termErr = "Only letters and white space allowed";
+            //$errorBoal = true; 
+          }
+          else {
+            addTerm($conn,$term);
+          }
+        }
+      
+    }
 
   }
+
+  function removeRow($conn,$table,$termid,$pkey) {
+    $sql = "DELETE FROM ". $table." WHERE ".$pkey."=".$termid;
+    if ($conn->query($sql) === TRUE) {
+      header("Location: {$_SERVER['PHP_SELF']}");
+      //echo "New record created successfully";
+    } else {
+      echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+  }
+
   function changeFixed($conn,$userId) {
 
     $sql = "UPDATE deskusers SET fixed = !fixed WHERE deskusers. deskuser_id =".$userId;
@@ -158,6 +193,18 @@
 
     $sql = "INSERT INTO calendars (deskuser_id, url)
     VALUES ('".$userId."','" .$calendar. "')";
+    if ($conn->query($sql) === TRUE) {
+      header("Location: {$_SERVER['PHP_SELF']}");
+    }
+    else {
+      echo "Error" . $conn->error;
+    }
+  }
+
+  function addTerm($conn,$term) {
+
+    $sql = "INSERT INTO searchterms (term)
+    VALUES ('".$term."')";
     if ($conn->query($sql) === TRUE) {
       header("Location: {$_SERVER['PHP_SELF']}");
     }
@@ -197,7 +244,7 @@
 
   </head>
   <body>
-    <div id="wrapper">
+    
 
       <header>
         <h1>Flexdesk occupancy admin</h1>
@@ -289,9 +336,52 @@ HTML;
 
             <label> <input type="submit" name="numOfDesks" value="Change Number"></label>
           </form>
+          <h3>Search Terms</h3>
+          <p>The app uses these terms to search through the calenders</p>
+          <table>
+            <tr>
+              <th>Term</th>
+              <th>Remove</th>
+            </tr>
+          
+          <?php
+              
+              $sql = "SELECT * FROM searchterms";
+              $result = $conn->query($sql);
+              
+              if ($result->num_rows > 0) {
+                  // output data of each row
+                  while($row = $result->fetch_assoc()) {
+                    $term = $row["term"];
+                    $action = htmlspecialchars($_SERVER["PHP_SELF"]);
+                    $termId = $row["searchterm_id"];
+
+                    echo <<<HTML
+                      <tr>
+                        <td>$term</td>
+                        <td>
+                          <form method="post" action=$action>
+                            <input type="hidden" name="termId" value=$termId>
+                            <input type="submit" name="removeterm" value="remove">
+                          </form>
+                        </td>
+                      </tr>
+HTML;
+                  }
+              } else {
+                  echo "search terms exist";
+              }
+
+          ?>
+          </table>
+          <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" >
+            <label> New term <input type="text" name="term"><span class="error">* <?php echo $termErr;?></span></label><br>
+
+            <label> <input type="submit" name="submitAddTerm" value="Add Search Term"></label>
+          </form>
         </section>
       </section> 
-    </div>
+    
   </body>
   <!-- <script src="moment.min.js"></script> -->
   <script src="javascript/app.js"></script>

@@ -8,18 +8,50 @@
    */
   require 'php/class.iCalReader.php';
 
+  session_start();
+
   $servername = "localhost";
   $username = "root";
   $password = "damcosecret";
   $dbname = "damco";
-
-  $currentDate = date("d-m-Y");
-  $currentShortDate = date("Ymd");
+  
+  if (!isset($_SESSION["dateNumber"])) {
+    $_SESSION["dateNumber"]=0;
+  }
+  
+  $currentShortDate = date('Ymd', strtotime($_SESSION["dateNumber"]." days"));
+  $dateNumber = 0;
    
+
   $searchArray = array("vacation","home","thuis");
 
   $numberOfPeople = 0;
   $fixexdeskNotPresent = 0;
+
+  if ($_SERVER["REQUEST_METHOD"] == "GET") {
+    if (!empty($_GET['changeDay'])) {
+      $changeDay = $_GET['changeDay'];
+      if ($changeDay=="next") {
+        $_SESSION["dateNumber"]++;
+        //$currentShortDate = date('Ymd', strtotime($_SESSION["dateNumber"]." days"));
+        //echo $currentShortDate ."</br>".$_SESSION["dateNumber"];
+        
+      }
+      if ($changeDay=="prev") {
+        $_SESSION["dateNumber"]--;
+        //$currentShortDate = date('Ymd', strtotime($_SESSION["dateNumber"]." days"));
+        
+        // echo $currentShortDate ."</br>".$_SESSION["dateNumber"]; ;
+      }
+      if ($changeDay=="today") {
+        $_SESSION["dateNumber"]=0;
+      } 
+      header("Location: {$_SERVER['PHP_SELF']}");  
+    }
+
+  }
+
+  $currentDate = date("d-m-Y", strtotime($_SESSION["dateNumber"]." days"));
 
   // Create connection
   $conn = new mysqli($servername, $username, $password, $dbname);
@@ -59,6 +91,8 @@
       echo "no desk user exist yet";
 
   }
+
+
 
   function searchOneUserCalendar($row, $conn , $currentShortDate , $searchArray) {
       $sql2 = "SELECT url FROM `calendars` WHERE deskuser_id = ".$row["deskuser_id"] ." ";//get urls that belong to this user
@@ -151,7 +185,7 @@
       </header>
       
       <section class="date">
-        <?php echo "<span> $currentDate </span>" ; ?>
+        <a href="?changeDay=prev" class=""><</a><?php echo "<span> $currentDate </span>" ; ?><a href="?changeDay=next" class="">></a><a href="?changeDay=today" id="todaylink" class="">Today</a>
       </section>
       <section class="deskvsemployee" >
         

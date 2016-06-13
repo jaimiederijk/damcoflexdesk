@@ -293,7 +293,7 @@
                     $resultCal = $conn->query($sqlCal);
                     if ($resultCal->num_rows > 0) {
                       while ( $rowCal = $resultCal->fetch_assoc()) {
-                        $calendar=$calendar. "<td class='tdcal'>".$rowCal["url"]."</td>";
+                        $calendar=$calendar. "<td class='tdcal'><div>".$rowCal["url"]."</div></td>";
                       }
                     }
                      
@@ -302,7 +302,13 @@
                           <td>$name</td>
                           <td>$email</td>
                           <td class=$showFixed>$showFixed <form method="post" action=$action>  <input type="hidden" name="userId" value=$userId><input type="submit" name="changeFixed" value="change"></form></td>
-                          <td><form method="post" action=$action>  <input type="hidden" name="userId" value=$userId><input type="text" name="addCal"><span class="error">*$calendarErr</span><input type="submit" name="submitAddCal" value="submit"></form></td>
+                          <td>
+                            <form method="post" action=$action>  
+                              <input type="hidden" name="userId" value=$userId>
+                              <input type="text" name="addCal"><span class="error">*$calendarErr</span>
+                              <input type="submit" name="submitAddCal" value="submit">
+                            </form>
+                          </td>
                           $calendar
                         </tr>
 HTML;
@@ -379,6 +385,10 @@ HTML;
 
             <label> <input type="submit" name="submitAddTerm" value="Add Search Term"></label>
           </form>
+
+          <h3>Upload excel file with user data</h3>
+          <p>E-mail me the excel file so that i can upload it directly to the database.</p>
+          <a href="mailto:jaimiedegiantrijk@gmail.com?Subject=damco%20excel">Send Email</a>
         </section>
       </section> 
     

@@ -48,8 +48,10 @@
       } 
       header("Location: {$_SERVER['PHP_SELF']}");  
     }
+ 
 
   }
+
 
   $currentDate = date("d-m-Y", strtotime($_SESSION["dateNumber"]." days"));
 
@@ -59,7 +61,24 @@
   // Check connection
   if ($conn->connect_error) {
       die("Connection failed: " . $conn->connect_error);
-  } 
+  }
+
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (!empty($_POST['selectuser'])) {
+      if (!empty($_POST['selecteduser'])) {
+        
+        setUserCookie($_POST['selecteduser']);
+      }
+      
+    }
+    if (!empty($_POST['changeGoingOffice'])) {
+      if (!empty($_POST['date'])) {
+        changeUserGoingToOffice($conn,$_POST['date']);
+        
+      }
+      
+    }   
+  }
 
   $sql = "SELECT * FROM deskusers";
   $result = $conn->query($sql);
@@ -92,7 +111,12 @@
 
   }
 
-
+  function setUserCookie ($id) {
+    $cookie_name = "user_id";
+    $cookie_value = $id;
+    setcookie($cookie_name, $cookie_value, time() + (86400 * 30 * 360), "/");
+    header("Location: {$_SERVER['PHP_SELF']}");
+  }
 
   function searchOneUserCalendar($row, $conn , $currentShortDate , $searchArray) {
       $sql2 = "SELECT url FROM `calendars` WHERE deskuser_id = ".$row["deskuser_id"] ." ";//get urls that belong to this user
@@ -149,21 +173,139 @@
   }
 
 
-  
-  $numberOfDesk = 1;
-  $sql4 = "SELECT desks FROM flexdesk_settings WHERE settings_id = 1 ";
-  $result4 = $conn->query($sql4);
-  if ($result4->num_rows > 0) {
-      // output data of each row
-      while($row4 = $result4->fetch_assoc()) {
-          $numberOfDesk = $row4["desks"];
-      }
-  } else {
-      echo "no number of desk specified";
+  function getDeskNumber($conn,$fixexdeskNotPresent) {
+    $numberOfDesk = 1;
+    $sql4 = "SELECT desks FROM flexdesk_settings WHERE settings_id = 1 ";
+    $result4 = $conn->query($sql4);
+    if ($result4->num_rows > 0) {
+        // output data of each row
+        while($row4 = $result4->fetch_assoc()) {
+            $numberOfDesk = $row4["desks"];
+        }
+    } else {
+        echo "no number of desk specified";
+    }
+    $numberOfDesk += $fixexdeskNotPresent;
+    return $numberOfDesk;
   }
-  $numberOfDesk += $fixexdeskNotPresent;
+
+  $numberOfDesk = getDeskNumber($conn,$fixexdeskNotPresent);
         
-  
+  function getUsersOptions($conn ) {
+    $text = "";
+    $sql = "SELECT * FROM deskusers";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+      while($row = $result->fetch_assoc()) {
+        $text = $text ."<option value=".$row["deskuser_id"].">". $row["name"] . "</option>";
+      }
+    }
+    return $text;
+  }
+
+  function getUserId () {
+    return $_COOKIE["user_id"];
+    //expand with backups
+  }
+
+  function changeUserGoingToOffice ($conn,$date) {
+    $notOfficeDate = date("Y-m-d",$date);
+    $guest=0;
+    $deskuser_id=getUserId();
+
+    $customCalendarId = checkCustomCalendar($conn,$date);
+    //if(isset($_COOKIE["user_id"])) {//!!!!!!!!!!more backup
+        //$deskuser_id=;
+    //}
+    
+    if ($customCalendarId) {
+      $sql = "DELETE FROM `custom_calendar` WHERE custom_calendar_id=". $customCalendarId;//;//
+      if ($conn->query($sql) === TRUE) {
+        
+      } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+      }
+    } else {
+      $sql = "INSERT INTO custom_calendar (notofficedate,guest,deskuser_id)
+      VALUES ('".$notOfficeDate."','".$guest."','".$deskuser_id."')";
+      if ($conn->query($sql) === TRUE) {
+        //header("Location: {$_SERVER['PHP_SELF']}");
+        //echo("succ");
+      }
+      else {
+        echo "Error" . $conn->error;
+      }      
+    }
+
+
+  }
+
+  function checkCustomCalendar ($conn,$dateStamp) {
+    //echo($conn);
+    $user = getUserId();
+    $date = date("Y-m-d",$dateStamp);
+    $sql = "SELECT * FROM `custom_calendar`WHERE deskuser_id =".$user." AND notofficedate='".$date."'";// " = ". ;
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+      //return true;
+      while($row = $result->fetch_assoc()) {
+        return $row["custom_calendar_id"];
+      }
+    } else {
+      return false;
+    }
+  }
+
+  function loopThroughWeeks ($weeks,$conn) {
+    $currentWeek = strtotime('previous Sunday');
+    $today = strtotime('today');
+    $result = "";
+    //$week = 0;
+    for ($i=0; $i < $weeks; $i++) {
+      $result = $result . "<div class='weeknumber'> Week: ".date('W',strtotime('+'.$i.' week', $today))."</div>";
+      $result = $result .  createWeekdays(strtotime('+'.$i.' week', $currentWeek),$conn);
+    }
+    return $result;
+  }
+
+  function createWeekdays($sundayTimeStamp,$conn) {
+    $timestamp = $sundayTimeStamp;
+      //$days = array();strtotime('previous Sunday');
+    $action =  htmlspecialchars($_SERVER["PHP_SELF"]);
+    $result = "";
+
+    for ($i = 0; $i < 5; $i++) {
+      $className="";
+      $img="";
+      //checkCustomCalendar($conn,$user);
+      
+        //$days[] = strftime('%A', $timestamp);
+      $timestamp = strtotime('+1 day', $timestamp);
+      if ($timestamp==strtotime('today')) {
+        $className="today";
+      } else if ($timestamp<strtotime('today')) {
+        $className="past";
+      }
+      if(checkCustomCalendar($conn,$timestamp)) {
+        $img="desk.svg";
+      } else {
+        $img="deskperson.svg";
+      }
+      
+
+      $result = $result . "<div class=".$className.">            
+        <form method='post' action=".$action.">
+          <span>".date('d/m',$timestamp)."</span>
+          <img src='images/".$img."'>
+          <input type='hidden' name='date' value=".$timestamp.">
+          <input type='submit' name='changeGoingOffice' value='change'>
+        </form>
+      </div>";
+    }
+    return $result;
+  }
        
 ?>
 
@@ -194,7 +336,39 @@
 
         
       </section>
-     
+      <section id="select_user">
+        <h2>Select user</h2>
+        <?php 
+          if(!isset($_COOKIE["user_id"])) {
+              echo "Cookie named is not set!";
+          } else {
+              echo "Cookie is set!<br>";
+              echo "Value is: " . $_COOKIE["user_id"];
+          }   
+          ?>
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+          <select name="selecteduser">
+            <?php
+              echo getUsersOptions($conn);
+
+            ?>            
+          </select>
+          <input type="submit" name="selectuser" value="select user">
+        </form>
+      </section>
+      <section id="deskuserinput">
+        <?php
+          if(isset($_COOKIE["user_id"])) {
+            echo   
+            "<div class='week'>
+              <div><span>Mon</span></div><div><span>Tue</span></div><div><span>Wed</span></div><div><span>Thu</span></div><div><span>Fri</span></div>         
+                ". loopThroughWeeks(4,$conn)."      
+            </div>";
+
+          }
+          
+        ?>
+      </section>
     </div>
   </body>
   <!-- <script src="moment.min.js"></script> -->

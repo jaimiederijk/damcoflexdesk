@@ -1,13 +1,4 @@
 <?php
-  /**
-   *
-   * @package  ics-parser
-   * @author   Martin Thoma <info@martin-thoma.de>
-   * @license  http://www.opensource.org/licenses/mit-license.php MIT License
-   * @link     https://github.com/MartinThoma/ics-parser/
-   */
-  require 'php/class.iCalReader.php';
-
   session_start();
 
   $servername = "localhost";
@@ -22,34 +13,34 @@
   $currentShortDate = date('Ymd', strtotime($_SESSION["dateNumber"]." days"));
   $dateNumber = 0;
    
-
-  $searchArray = array("vacation","home","thuis");
+  //require 'php/parsecalendar.php';
+  require 'php/cronjob.php';
 
   $numberOfPeople = 0;
   $fixexdeskNotPresent = 0;
 
+
+  // chosen date 
   if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if (!empty($_GET['changeDay'])) {
       $changeDay = $_GET['changeDay'];
       if ($changeDay=="next") {
         $_SESSION["dateNumber"]++;
-        //$currentShortDate = date('Ymd', strtotime($_SESSION["dateNumber"]." days"));
-        //echo $currentShortDate ."</br>".$_SESSION["dateNumber"];
         
       }
       if ($changeDay=="prev") {
         $_SESSION["dateNumber"]--;
-        //$currentShortDate = date('Ymd', strtotime($_SESSION["dateNumber"]." days"));
-        
-        // echo $currentShortDate ."</br>".$_SESSION["dateNumber"]; ;
+
       }
       if ($changeDay=="today") {
         $_SESSION["dateNumber"]=0;
       } 
       header("Location: {$_SERVER['PHP_SELF']}");  
     }
+ 
 
   }
+
 
   $currentDate = date("d-m-Y", strtotime($_SESSION["dateNumber"]." days"));
 
@@ -59,111 +50,206 @@
   // Check connection
   if ($conn->connect_error) {
       die("Connection failed: " . $conn->connect_error);
-  } 
-
-  $sql = "SELECT * FROM deskusers";
-  $result = $conn->query($sql);
-
-  $numberOfPeople = $result->num_rows;
-
-  if ($numberOfPeople > 0) {
-      // output data of each row
-      while($row = $result->fetch_assoc()) { //users
-        if ($row["defaultpresent"]==1) { // desk user is normaly present
-          $positves = 0 ;
-
-          $posPerCal = searchOneUserCalendar($row, $conn,$currentShortDate,$searchArray);
-          if ($posPerCal>0) {
-            $positves+=1; //add 1 to positive per user per cal
-          }
-
-          if ($positves>0 && $row["fixed"] == 0) { //user cal contains positives so min one to the number of people comming
-            $numberOfPeople-=1;
-          } else if ($positves>0 && $row["fixed"] == 1) {
-            $fixexdeskNotPresent +=1;
-          }
-        } else { //deskuser is not normaly present
-          $numberOfPeople-=1;
-        }
-          
-      }
-  } else {
-      echo "no desk user exist yet";
-
   }
 
 
 
-  function searchOneUserCalendar($row, $conn , $currentShortDate , $searchArray) {
-      $sql2 = "SELECT url FROM `calendars` WHERE deskuser_id = ".$row["deskuser_id"] ." ";//get urls that belong to this user
-      $result2 = $conn->query($sql2);
-      if ($result2->num_rows > 0) { //loop through arrays
-        // output data of each row
-        while($row2 = $result2->fetch_assoc()) {
-
-            $ical   = new ICal($row2["url"]);
-            $events = $ical->events();
-
-          $datePositions = findEventsWithDate($events, $currentShortDate); // find all events with the date
-
-          $posPerCal = searchCalendar($datePositions,$events,$searchArray); // return number of positves in one calendar
-
-          if ($posPerCal>0) {
-            return $posPerCal;
-          }
-          
-        } 
-      }
-  }
-  
-  function findEventsWithDate($events,$date) {
-    $eventsLength=count($events);
-    $results = array();
-
-    for ($i=0; $i < $eventsLength; $i++) { 
-      if (mb_stripos($events[$i]['DTSTART'],$date) !== false) {
-        array_push($results, $i);
-      }
-    }
-    return $results;
-  }  
-
-
-  function searchCalendar($datePositions,$events,$searchArray) {
-   
-    $arrlength = count($datePositions);
-    $trueResult = 0;
-
-    for($x=0; $x < $arrlength; $x++) { //foreach event on this date
-
-
-      $searchLength = count($searchArray); //for each searchterm
-      for ($i=0; $i < $searchLength; $i++) { 
-        if (mb_stripos($events[$datePositions[$x]]['SUMMARY'],$searchArray[$i]) !== false) {
-          $trueResult+=1;
-        }
-      }
-
-    }
-    return $trueResult;
-  }
-
-
-  
-  $numberOfDesk = 1;
-  $sql4 = "SELECT desks FROM flexdesk_settings WHERE settings_id = 1 ";
-  $result4 = $conn->query($sql4);
-  if ($result4->num_rows > 0) {
-      // output data of each row
-      while($row4 = $result4->fetch_assoc()) {
-          $numberOfDesk = $row4["desks"];
-      }
-  } else {
-      echo "no number of desk specified";
-  }
-  $numberOfDesk += $fixexdeskNotPresent;
+  // handle post request
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // select user form
+    if (!empty($_POST['selectuser'])) {
+      if (!empty($_POST['selecteduser'])) {
         
-  
+        setUserCookie($_POST['selecteduser']);
+      }
+      
+    }
+    // change this user custom calendar 
+    if (!empty($_POST['changeGoingOffice'])) {
+      if (!empty($_POST['date'])) {
+        changeUserGoingToOffice($conn,$_POST['date']);
+        
+      }
+      
+    }   
+  }
+
+
+  //manualCronjob
+  //loopDays();
+  function getCustomCalResult ($conn,$date) {
+    $resultdate = date("Y-m-d",strtotime($date));
+    $num = 0;
+    $sql = "SELECT * FROM `custom_calendar` WHERE notofficedate = '".$resultdate."'";
+
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+      while($row = $result->fetch_assoc()) {
+        $num+=1;
+      }
+    } else {
+      
+    }
+    return $num;
+  }
+
+  function getOccupencyResults ($conn,$currentShortDate) {
+    $resultdate = date("Y-m-d",strtotime($currentShortDate));
+    $num = getCustomCalResult ($conn,$resultdate);
+    
+    $resultdesk=array();
+    $sql = "SELECT * FROM `occupancy_results` WHERE resultdate = '".$resultdate."'";
+    $result = $conn->query($sql);
+    while($row = $result->fetch_assoc()) {
+
+      array_push($resultdesk, $row['desk'],$row['people']-=$num);
+      return $resultdesk;
+    }
+
+  }
+
+  $resultDeskOccupency = getOccupencyResults($conn,$currentShortDate);
+  $numberOfPeople=$resultDeskOccupency[1];
+  $numberOfDesk=$resultDeskOccupency[0];
+
+
+  function setUserCookie ($id) {
+    $cookie_name = "user_id";
+    $cookie_value = $id;
+    setcookie($cookie_name, $cookie_value, time() + (86400 * 30 * 360), "/");
+    header("Location: {$_SERVER['PHP_SELF']}");
+  }
+       
+  function getUsersOptions($conn ) {
+    $text = "";
+    $sql = "SELECT * FROM deskusers";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+      while($row = $result->fetch_assoc()) {
+        $text = $text ."<option value=".$row["deskuser_id"].">". $row["name"] . "</option>";
+      }
+    }
+    return $text;
+  }
+
+  function getUserId () {
+    return $_COOKIE["user_id"];
+    //expand with backups
+  }
+
+  function changeUserGoingToOffice ($conn,$date) {
+    $notOfficeDate = date("Y-m-d",$date);
+    $guest=0;
+    $deskuser_id=getUserId();
+
+    $customCalendarId = checkCustomCalendar($conn,$date);
+    //if(isset($_COOKIE["user_id"])) {//!!!!!!!!!!more backup
+        //$deskuser_id=;
+    //}
+    
+    if ($customCalendarId) {
+      $sql = "DELETE FROM `custom_calendar` WHERE custom_calendar_id=". $customCalendarId;//;//
+      if ($conn->query($sql) === TRUE) {
+        header("Location: {$_SERVER['PHP_SELF']}");
+      } else {
+        echo "Error: " . $sql . "<br>" . $conn->error;
+      }
+    } else {
+      $sql = "INSERT INTO custom_calendar (notofficedate,guest,deskuser_id)
+      VALUES ('".$notOfficeDate."','".$guest."','".$deskuser_id."')";
+      if ($conn->query($sql) === TRUE) {
+        header("Location: {$_SERVER['PHP_SELF']}");
+        //echo("succ");
+      }
+      else {
+        echo "Error" . $conn->error;
+      }      
+    }
+
+
+  }
+
+  function checkCustomCalendar ($conn,$dateStamp) {
+    //echo($conn);
+    $user = getUserId();
+    $date = date("Y-m-d",$dateStamp);
+    $sql = "SELECT * FROM `custom_calendar`WHERE deskuser_id =".$user." AND notofficedate='".$date."'";// " = ". ;
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+      //return true;
+      while($row = $result->fetch_assoc()) {
+        return $row["custom_calendar_id"];
+      }
+    } else {
+      return false;
+    }
+  }
+
+  function loopThroughWeeks ($weeks,$conn) {
+    $currentWeek = strtotime('previous Sunday');
+    $today = strtotime('today');
+    $result = "";
+    //$week = 0;
+    for ($i=0; $i < $weeks; $i++) {
+      $result = $result . "<div class='weeknumber'> Week: ".date('W',strtotime('+'.$i.' week', $today))."</div>";
+      $result = $result .  createWeekdays(strtotime('+'.$i.' week', $currentWeek),$conn);
+    }
+    return $result;
+  }
+
+  function createWeekdays($sundayTimeStamp,$conn) {
+    $timestamp = $sundayTimeStamp;
+      //$days = array();strtotime('previous Sunday');
+    $action =  htmlspecialchars($_SERVER["PHP_SELF"]);
+    $result = "";
+
+    for ($i = 0; $i < 5; $i++) {
+      $className="";
+      $img="";
+      //checkCustomCalendar($conn,$user);
+      
+        //$days[] = strftime('%A', $timestamp);
+      $timestamp = strtotime('+1 day', $timestamp);
+      if ($timestamp==strtotime('today')) {
+        $className="today";
+      } else if ($timestamp<strtotime('today')) {
+        $className="past";
+      }
+      if(checkCustomCalendar($conn,$timestamp)) {
+        $img="desk.svg";
+      } else {
+        $img="deskperson.svg";
+      }
+      
+
+      $result = $result . "<div class=".$className.">            
+        <form method='post' action=".$action.">
+          <span>".date('d/m',$timestamp)."</span>
+          <img src='images/".$img."'>
+          <input type='hidden' name='date' value=".$timestamp.">
+          <input type='submit' name='changeGoingOffice' value='change'>
+        </form>
+      </div>";
+    }
+    return $result;
+  }
+
+  function getUserName ($conn,$id) {
+    $sql = "SELECT * FROM `deskusers` WHERE deskuser_id =".$id;
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+      //return true;
+      while($row = $result->fetch_assoc()) {
+        return $row["name"];
+      }
+    } else {
+      echo "Error" . $conn->error;
+    }
+
+  }
        
 ?>
 
@@ -194,7 +280,43 @@
 
         
       </section>
-     
+      <section id="select_user">
+        <h2>Select user</h2>
+        <?php 
+          if(!isset($_COOKIE["user_id"])) {
+            $action = htmlspecialchars($_SERVER["PHP_SELF"]);
+            $optionText = getUsersOptions($conn);
+            echo <<<HTML
+            <p>Select your name to display your calendar</p>
+
+            <form method="post" action=$action>
+              <select name="selecteduser">              
+                $optionText
+              </select>
+              <input type="submit" name="selectuser" value="select user">
+            </form>
+HTML;
+          } else {
+            $userName = getUserName($conn,$_COOKIE["user_id"]);
+              //echo "Cookie is set!<br>";
+              echo "<h2>Calendar:". $userName . "</h2>";
+          }   
+          ?>
+        
+      </section>
+      <section id="deskuserinput">
+        <?php
+          if(isset($_COOKIE["user_id"])) {
+            echo   
+            "<div class='week'>
+              <div><span>Mon</span></div><div><span>Tue</span></div><div><span>Wed</span></div><div><span>Thu</span></div><div><span>Fri</span></div>         
+                ". loopThroughWeeks(4,$conn)."      
+            </div>";
+
+          }
+          
+        ?>
+      </section>
     </div>
   </body>
   <!-- <script src="moment.min.js"></script> -->

@@ -77,6 +77,7 @@
         }
 
         if (!$errorBoal) {
+          $defaultpresent=1; //override because always present
           $sql2 = "INSERT INTO deskusers (name,fixed,defaultpresent, email)
           VALUES ('".$name."', '".$fixed."','". $defaultpresent."','".$email."')";
 

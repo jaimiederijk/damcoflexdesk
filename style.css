@@ -153,11 +153,55 @@ td input[type="text"] {
     overflow-wrap: break-word;
 }
 
+#deskuserinput .week {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+#deskuserinput div div {
+    width: 19%;
+    background-color: #a9d6f4;
+    margin-bottom: 1rem;
+}
+#deskuserinput span {
+    display: block;
+    width: 100%;
+    /* margin: auto; */
+    text-align: center;
+}
+#deskuserinput img {
+    width: 50%;
+    height: auto;
+    margin-left: 25%;
+}
+#deskuserinput form {
+    position: relative;
+}
+#deskuserinput input[type="submit"] {
+    position: absolute;
+    width: 100%;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    height: 5em;
+}
+#deskuserinput .week .today {
+    background-color: rgb(154, 205, 50);
+}
+#deskuserinput .week .past {
+    opacity: 0.5;
+}
+#deskuserinput .weeknumber {
+    width:100%;
+}
+#deskuserinput input[type="submit"]:hover {
+    cursor: pointer;
+}
 
 
-
-
-
+#select_user select {
+    font-size: 1.5em;
+}
 
 @media (max-width: 600px) { 
     body {

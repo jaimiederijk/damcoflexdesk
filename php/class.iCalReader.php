@@ -47,7 +47,7 @@ class ICal
      * @return Object The iCal Object
      */
     public function __construct($filename=false)
-    {
+    {   set_time_limit(0);
         if (!$filename) {
             return false;
         }

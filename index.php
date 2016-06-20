@@ -219,6 +219,7 @@
       }
       if(checkCustomCalendar($conn,$timestamp)) {
         $img="desk.svg";
+        $className=$className." emptydesk";
       } else {
         $img="deskperson.svg";
       }
@@ -280,42 +281,44 @@
 
         
       </section>
-      <section id="select_user">
-        <h2>Select user</h2>
-        <?php 
-          if(!isset($_COOKIE["user_id"])) {
-            $action = htmlspecialchars($_SERVER["PHP_SELF"]);
-            $optionText = getUsersOptions($conn);
-            echo <<<HTML
-            <p>Select your name to display your calendar</p>
+      <section id="usercal">
+        <section id="select_user">
+          <h2>Select user</h2>
+          <?php 
+            if(!isset($_COOKIE["user_id"])) {
+              $action = htmlspecialchars($_SERVER["PHP_SELF"]);
+              $optionText = getUsersOptions($conn);
+              echo <<<HTML
+              <p>Select your name to display your calendar</p>
 
-            <form method="post" action=$action>
-              <select name="selecteduser">              
-                $optionText
-              </select>
-              <input type="submit" name="selectuser" value="select user">
-            </form>
+              <form method="post" action=$action>
+                <select name="selecteduser">              
+                  $optionText
+                </select>
+                <input type="submit" name="selectuser" value="select user">
+              </form>
 HTML;
-          } else {
-            $userName = getUserName($conn,$_COOKIE["user_id"]);
-              //echo "Cookie is set!<br>";
-              echo "<h2>Calendar:". $userName . "</h2>";
-          }   
-          ?>
-        
-      </section>
-      <section id="deskuserinput">
-        <?php
-          if(isset($_COOKIE["user_id"])) {
-            echo   
-            "<div class='week'>
-              <div><span>Mon</span></div><div><span>Tue</span></div><div><span>Wed</span></div><div><span>Thu</span></div><div><span>Fri</span></div>         
-                ". loopThroughWeeks(4,$conn)."      
-            </div>";
-
-          }
+            } else {
+              $userName = getUserName($conn,$_COOKIE["user_id"]);
+                //echo "Cookie is set!<br>";
+                echo "<h2>Calendar:". $userName . "</h2>";
+            }   
+            ?>
           
-        ?>
+        </section>
+        <section id="deskuserinput">
+          <?php
+            if(isset($_COOKIE["user_id"])) {
+              echo   
+              "<div class='week'>
+                <div><span>Mon</span></div><div><span>Tue</span></div><div><span>Wed</span></div><div><span>Thu</span></div><div><span>Fri</span></div>         
+                  ". loopThroughWeeks(4,$conn)."      
+              </div>";
+
+            }
+            
+          ?>
+        </section>
       </section>
     </div>
   </body>

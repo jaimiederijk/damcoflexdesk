@@ -77,17 +77,32 @@
 
   //manualCronjob
   //loopDays();
+  function getCustomCalResult ($conn,$date) {
+    $resultdate = date("Y-m-d",strtotime($date));
+    $num = 0;
+    $sql = "SELECT * FROM `custom_calendar` WHERE notofficedate = '".$resultdate."'";
 
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+      while($row = $result->fetch_assoc()) {
+        $num+=1;
+      }
+    } else {
+      
+    }
+    return $num;
+  }
 
   function getOccupencyResults ($conn,$currentShortDate) {
     $resultdate = date("Y-m-d",strtotime($currentShortDate));
+    $num = getCustomCalResult ($conn,$resultdate);
     
     $resultdesk=array();
     $sql = "SELECT * FROM `occupancy_results` WHERE resultdate = '".$resultdate."'";
     $result = $conn->query($sql);
     while($row = $result->fetch_assoc()) {
 
-      array_push($resultdesk, $row['desk'],$row['people']);
+      array_push($resultdesk, $row['desk'],$row['people']-=$num);
       return $resultdesk;
     }
 
@@ -136,7 +151,7 @@
     if ($customCalendarId) {
       $sql = "DELETE FROM `custom_calendar` WHERE custom_calendar_id=". $customCalendarId;//;//
       if ($conn->query($sql) === TRUE) {
-        
+        header("Location: {$_SERVER['PHP_SELF']}");
       } else {
         echo "Error: " . $sql . "<br>" . $conn->error;
       }
@@ -144,7 +159,7 @@
       $sql = "INSERT INTO custom_calendar (notofficedate,guest,deskuser_id)
       VALUES ('".$notOfficeDate."','".$guest."','".$deskuser_id."')";
       if ($conn->query($sql) === TRUE) {
-        //header("Location: {$_SERVER['PHP_SELF']}");
+        header("Location: {$_SERVER['PHP_SELF']}");
         //echo("succ");
       }
       else {
@@ -220,6 +235,21 @@
     }
     return $result;
   }
+
+  function getUserName ($conn,$id) {
+    $sql = "SELECT * FROM `deskusers` WHERE deskuser_id =".$id;
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+      //return true;
+      while($row = $result->fetch_assoc()) {
+        return $row["name"];
+      }
+    } else {
+      echo "Error" . $conn->error;
+    }
+
+  }
        
 ?>
 
@@ -254,21 +284,25 @@
         <h2>Select user</h2>
         <?php 
           if(!isset($_COOKIE["user_id"])) {
-              echo "Cookie named is not set!";
+            $action = htmlspecialchars($_SERVER["PHP_SELF"]);
+            $optionText = getUsersOptions($conn);
+            echo <<<HTML
+            <p>Select your name to display your calendar</p>
+
+            <form method="post" action=$action>
+              <select name="selecteduser">              
+                $optionText
+              </select>
+              <input type="submit" name="selectuser" value="select user">
+            </form>
+HTML;
           } else {
-              echo "Cookie is set!<br>";
-              echo "Value is: " . $_COOKIE["user_id"];
+            $userName = getUserName($conn,$_COOKIE["user_id"]);
+              //echo "Cookie is set!<br>";
+              echo "<h2>Calendar:". $userName . "</h2>";
           }   
           ?>
-        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-          <select name="selecteduser">
-            <?php
-              echo getUsersOptions($conn);
-
-            ?>            
-          </select>
-          <input type="submit" name="selectuser" value="select user">
-        </form>
+        
       </section>
       <section id="deskuserinput">
         <?php

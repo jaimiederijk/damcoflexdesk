@@ -16,6 +16,9 @@
   //require 'php/parsecalendar.php';
   require 'php/cronjob.php';
 
+  //manualCronjob
+  //loopDays();
+
   $numberOfPeople = 0;
   $fixexdeskNotPresent = 0;
 
@@ -69,14 +72,16 @@
       if (!empty($_POST['date'])) {
         changeUserGoingToOffice($conn,$_POST['date']);
         
-      }
-      
-    }   
+      }     
+    }
+    if (!empty($_POST["changeFixed"])) {
+      $fixedUserId = $_POST["userId"];
+
+      changeFixed($conn,$fixedUserId);
+    }
   }
 
 
-  //manualCronjob
-  //loopDays();
   function getCustomCalResult ($conn,$date) {
     $resultdate = date("Y-m-d",strtotime($date));
     $num = 0;
@@ -85,7 +90,9 @@
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
       while($row = $result->fetch_assoc()) {
-        $num+=1;
+        if ($row["fromextcal"]==0) {
+          $num+=1;
+        }        
       }
     } else {
       
@@ -138,6 +145,17 @@
     //expand with backups
   }
 
+  function changeFixed($conn,$userId) {
+
+    $sql = "UPDATE deskusers SET fixed = !fixed WHERE deskusers. deskuser_id =".$userId;
+    if ($conn->query($sql) === TRUE) {
+      header("Location: {$_SERVER['PHP_SELF']}");
+      //echo "New record created successfully";
+    } else {
+      echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+  }
+
   function changeUserGoingToOffice ($conn,$date) {
     $notOfficeDate = date("Y-m-d",$date);
     $guest=0;
@@ -170,8 +188,9 @@
 
   }
 
+
   function checkCustomCalendar ($conn,$dateStamp) {
-    //echo($conn);
+    
     $user = getUserId();
     $date = date("Y-m-d",$dateStamp);
     $sql = "SELECT * FROM `custom_calendar`WHERE deskuser_id =".$user." AND notofficedate='".$date."'";// " = ". ;
@@ -193,7 +212,7 @@
     $result = "";
     //$week = 0;
     for ($i=0; $i < $weeks; $i++) {
-      $result = $result . "<div class='weeknumber'> Week: ".date('W',strtotime('+'.$i.' week', $today))."</div>";
+      $result = $result . "<div class='weeknumber'><span> Week: ".date('W',strtotime('+'.$i.' week', $today))."</span></div>";
       $result = $result .  createWeekdays(strtotime('+'.$i.' week', $currentWeek),$conn);
     }
     return $result;
@@ -204,6 +223,8 @@
       //$days = array();strtotime('previous Sunday');
     $action =  htmlspecialchars($_SERVER["PHP_SELF"]);
     $result = "";
+    $numberOfDesk=0;
+    $numberOfPeople=0;
 
     for ($i = 0; $i < 5; $i++) {
       $className="";
@@ -224,34 +245,88 @@
         $img="deskperson.svg";
       }
       
+      $resultDeskOccupency = getOccupencyResults($conn,date("Ymd",$timestamp));
+      $numberOfPeople=$resultDeskOccupency[1];
+      $numberOfDesk=$resultDeskOccupency[0];
+      $divId = "d".date('d-m',$timestamp);
 
-      $result = $result . "<div class=".$className.">            
+      $result = $result . "<div id='$divId' class='".$className."'>            
         <form method='post' action=".$action.">
-          <span>".date('d/m',$timestamp)."</span>
-          <img src='images/".$img."'>
+          <span>".date('d-m',$timestamp)."</span>
+          
           <input type='hidden' name='date' value=".$timestamp.">
-          <input type='submit' name='changeGoingOffice' value='change'>
+          <button type='submit' name='changeGoingOffice' value='change'><img src='images/".$img."'></button>
         </form>
+        <div class='deskvsemployee'>
+          <div class='desk'><span>$numberOfDesk - </span><img src='images/desk.svg'></div>
+          <div class='employee'><p><span>$numberOfPeople</span> - </p><img src='images/deskperson.svg'></div>
+        </div>
       </div>";
     }
     return $result;
   }
 
-  function getUserName ($conn,$id) {
+  function getUserInfo ($conn,$id) {
     $sql = "SELECT * FROM `deskusers` WHERE deskuser_id =".$id;
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
       //return true;
       while($row = $result->fetch_assoc()) {
-        return $row["name"];
+        return $row;
       }
     } else {
       echo "Error" . $conn->error;
     }
 
   }
-       
+
+  function createUserStuff ($conn) {
+    $action = htmlspecialchars($_SERVER["PHP_SELF"]);
+      if(!isset($_COOKIE["user_id"])) {
+        
+        $optionText = getUsersOptions($conn);
+        echo <<<HTML
+        <p>Select your name to display your calendar</p>
+
+        <form method="post" action=$action>
+          <select name="selecteduser">              
+            $optionText
+          </select>
+          <input type="submit" name="selectuser" value="select user">
+        </form>
+HTML;
+      } else {
+
+        $userInfo = getUserInfo($conn,$_COOKIE["user_id"]);
+        $userName = $userInfo["name"];
+        $userId = $_COOKIE["user_id"];
+        $img="";
+        if ($userInfo["fixed"]==1) {
+          $showFixed = "true";
+          $img="images/deskpersonlock.svg";
+          $fixedDeskText = "Fixed";
+        } else {
+          $showFixed = "false";
+          $img="images/deskpersonunlock.svg";
+          $fixedDeskText = "Not Fixed";
+        }
+         
+          //echo "Cookie is set!<br>";
+        echo <<<HTML
+          <h2>Calendar: $userName </h2>
+          
+          
+          <form id='fixeddeskform' method="post" action=$action>
+            <label for="changefixed" data-showfixed="$showFixed">$fixedDeskText </label>
+              <input type="hidden" name="userId" value=$userId>
+              <button id="changefixed" type="submit" name="changeFixed" value="change"><img src=$img></button>
+            
+          </form>
+          
+HTML;
+    }
+  }       
 ?>
 
 <html>  
@@ -259,7 +334,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="css/style.css">
     <title>flexdesk</title>
 
   </head>
@@ -268,41 +343,27 @@
 
       <header>
         <h1>Flexdesk occupancy </h1>
-        <nav><a href="settings.php">Settings<img src="images/gear_icon.svg"></a></nav>
+        <!-- <nav><a href="settings.php">Settings<img src="images/gear_icon.svg" alt="menu"></a></nav> -->
       </header>
       
       <section class="date">
-        <a href="?changeDay=prev" class=""><</a><?php echo "<span> $currentDate </span>" ; ?><a href="?changeDay=next" class="">></a><a href="?changeDay=today" id="todaylink" class="">Today</a>
+        <a href="?changeDay=prev" class=""><</a>
+        <?php echo "<span id='currentDate'> $currentDate </span>" ; ?>
+        <a href="?changeDay=next" class="">></a>
+        <!-- <a href="?changeDay=today" id="todaylink" class="">Today</a> -->
       </section>
-      <section class="deskvsemployee" >
+      <section class="deskvsemployee" id="maindeskvsemployee" >
         
-        <div id="desk"><?php echo "<span>$numberOfDesk - </span>"; ?><img src="images/desk.svg"></div>
-        <div id="employee"><?php echo "<span>$numberOfPeople - </span>"; ?><img src="images/deskperson.svg"></div>
+        <div class="desk"><?php echo "<span>$numberOfDesk - </span>"; ?><img src="images/desk.svg"></div>
+        <div class="employee"><?php echo "<span>$numberOfPeople</span> - "; ?><img src="images/deskperson.svg"></div>
 
         
       </section>
       <section id="usercal">
         <section id="select_user">
           <h2>Select user</h2>
-          <?php 
-            if(!isset($_COOKIE["user_id"])) {
-              $action = htmlspecialchars($_SERVER["PHP_SELF"]);
-              $optionText = getUsersOptions($conn);
-              echo <<<HTML
-              <p>Select your name to display your calendar</p>
-
-              <form method="post" action=$action>
-                <select name="selecteduser">              
-                  $optionText
-                </select>
-                <input type="submit" name="selectuser" value="select user">
-              </form>
-HTML;
-            } else {
-              $userName = getUserName($conn,$_COOKIE["user_id"]);
-                //echo "Cookie is set!<br>";
-                echo "<h2>Calendar:". $userName . "</h2>";
-            }   
+          <?php
+               createUserStuff($conn);
             ?>
           
         </section>
@@ -322,6 +383,6 @@ HTML;
       </section>
     </div>
   </body>
-  <!-- <script src="moment.min.js"></script> -->
+  
   <script src="javascript/app.js"></script>
 </html>  

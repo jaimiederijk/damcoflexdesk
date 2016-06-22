@@ -6,7 +6,7 @@
 		$result = array($date);
 
 
-		for ($i=0; $i < 30; $i++) { 
+		for ($i=0; $i < 5; $i++) { 
 			$timestamp = strtotime($date);
 			$date =date("Ymd", strtotime('+1 day', $timestamp));
 			array_push($result,$date);

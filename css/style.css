@@ -161,6 +161,30 @@ td input[type="text"] {
     margin: auto;
 }
 
+/*select user section*/
+#select_user {
+    position: relative;
+}
+#select_user select {
+    font-size: 1.5em;
+}
+#fixeddeskform {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+#fixeddeskform label {
+    height: auto;
+    padding: 0;
+}
+#fixeddeskform img {
+    height: 3rem;
+}
+#fixeddeskform button {
+    background-color: #7289a5;
+}
+
+
 #deskuserinput {
     font-size: 1.2em;
 }
@@ -169,32 +193,76 @@ td input[type="text"] {
     justify-content: space-between;
     flex-wrap: wrap;
 }
-#deskuserinput div div {
+#deskuserinput> div> div {
     width: 19%;
     background-color: #a9d6f4;
     margin-bottom: 1rem;
-    -webkit-box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);
+    /*-webkit-box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);
-    box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);
+    box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);*/
 }
-#deskuserinput div div:nth-of-type(1),#deskuserinput div div:nth-of-type(2),#deskuserinput div div:nth-of-type(3),#deskuserinput div div:nth-of-type(4),#deskuserinput div div:nth-of-type(5) {
+#deskuserinput> div> div:nth-of-type(-n+5) {
     box-shadow: none;
+    background-color: rgb(192, 192, 192);
+}
+#deskuserinput .desk,#deskuserinput .employee {
+    font-size: 1em;
+    text-align: left;
+    
+}
+#deskuserinput .employee {
+    border-left: solid #4f4f4f;
+}
+#deskuserinput .deskvsemployee div > * {
+    display: inline-block;
+    width: 49%;
+    padding: 0;
+    margin: 0;
+    vertical-align: middle;
+}
+#deskuserinput .deskvsemployee div img {
+    padding: 0.3rem 0;
+}
+#deskuserinput .deskvsemployee div span {
+    text-align: center;
+    font-size: 1.5em;
+    vertical-align: middle;
+}
+#deskuserinput .deskvsemployee > div {
+    padding: 0;
+    width: 50%;
+}
+#deskuserinput .deskvsemployee {
+    width: 100%;
 }
 #deskuserinput span {
+    position: relative;
     padding: 0.3rem;
-    display: block;
+    /*display: block;*/
     width: 100%;
     /* margin: auto; */
     
     text-align: left;
 }
+#deskuserinput button {
+    background: none;
+    padding-top: 1.3rem;
+    margin-top: -1.5rem;
+    border: none;
+    width: 100%;
+}
 #deskuserinput img {
     width: 50%;
     height: auto;
-    margin-left: 25%;
+    /*margin-left: 25%;*/
 }
 #deskuserinput form {
     position: relative;
+    -webkit-box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);
+    box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);
+    margin: 0;
+    padding-bottom: 1rem;
 }
 #deskuserinput input[type="submit"] {
     position: absolute;
@@ -216,8 +284,9 @@ td input[type="text"] {
     -moz-box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);
     box-shadow: none;
 }
-#deskuserinput input[type="submit"]:hover {
+input[type="submit"]:hover, button[type="submit"]:hover {
     cursor: pointer;
+    cursor: hand; 
 }
 
 #deskuserinput .week .emptydesk {
@@ -225,13 +294,10 @@ td input[type="text"] {
     color:#FFFFFF;
 }
 
-#select_user select {
-    font-size: 1.5em;
-}
 
 
-    min-width: 3rem;
-}
+
+
 th:nth-of-type(2) {
     width: 15%;
 }
@@ -261,6 +327,18 @@ th:nth-of-type(5) {
         font-size: 2em;
     }
     .deskvsemployee {
-        font-size: 0.5em;
+        font-size: 0.8em;
+    }
+    #fixeddeskform img {
+        height:2rem;
+    }
+    #deskuserinput .deskvsemployee p {
+        color: #0090d4;
+    }
+    #deskuserinput .deskvsemployee div span {
+        font-size: 1em;
+        position: relative;
+        top: 0.5rem;
+        color: #FFFFFF;
     }
 }

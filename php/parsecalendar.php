@@ -33,14 +33,8 @@
     }
 
 
-
-    $sql = "SELECT * FROM deskusers";
-    $result = $conn->query($sql);
-
-    $numberOfPeople = $result->num_rows;
-
-
     if(!function_exists('searchOneUserCalendar')){
+    	// search 
 	    function searchOneUserCalendar($row, $conn , $currentShortDate , $searchArray) {
 	      $sql2 = "SELECT url FROM `calendars` WHERE deskuser_id = ".$row["deskuser_id"] ." ";//get urls that belong to this user
 	      $result2 = $conn->query($sql2);
@@ -55,13 +49,62 @@
 
 	          $posPerCal = searchCalendar($datePositions,$events,$searchArray); // return number of positves in one calendar
 
-	          if ($posPerCal>0) {
+	          if ($posPerCal>0) {//if terms have been found
+	          	insertIntoCustomCal($conn,$row["deskuser_id"],0,$currentShortDate);
 	            return $posPerCal;
 	          }
 	          
 	        } 
 	      }
 	    }
+	}
+
+	if(!function_exists('insertIntoCustomCal')){
+		function insertIntoCustomCal ($conn,$deskuser_id,$guest,$date) {
+			$notOfficeDate = date("Y-m-d",strtotime($date));
+    		$guest=0;
+    		$customCalendarId = checkCustomCalendar2($conn,strtotime($date),$deskuser_id);
+			
+			if (!$customCalendarId) {
+				$sql = "INSERT INTO custom_calendar (notofficedate,guest,deskuser_id,fromextcal)
+		      	VALUES ('".$notOfficeDate."','".$guest."','".$deskuser_id."',1)";
+		      	
+		      	if ($conn->query($sql) === TRUE) {
+		        	//header("Location: {$_SERVER['PHP_SELF']}");
+		        	//echo("succ");
+		      	}
+		      	else {
+		        	echo "Error" . $conn->error;
+		      	} 			
+			} else { //update because a positve has also been found in the calendar
+				$sql = "UPDATE `custom_calendar` SET `fromextcal` = '1' WHERE `custom_calendar`.`custom_calendar_id` = ". $customCalendarId;//;//
+				if ($conn->query($sql) === TRUE) {
+				
+				} else {
+					echo "Error: " . $sql . "<br>" . $conn->error;
+				}
+			}			
+		
+		}
+	}
+
+	if(!function_exists('checkCustomCalendar2')){
+		function checkCustomCalendar2 ($conn,$dateStamp,$deskuser_id) {
+			//echo($conn);
+			//$user = getUserId();
+			$date = date("Y-m-d",$dateStamp);
+			$sql = "SELECT * FROM `custom_calendar`WHERE deskuser_id =".$deskuser_id." AND notofficedate='".$date."'";// " = ". ;
+			$result = $conn->query($sql);
+
+			if ($result->num_rows > 0) {
+				//return true;
+				while($row = $result->fetch_assoc()) {
+				return $row["custom_calendar_id"];
+			}
+			} else {
+				return false;
+			}
+		}
 	}
 
 	if(!function_exists('findEventsWithDate')){
@@ -166,6 +209,11 @@
 
 	    }
 	}
+
+	$sql = "SELECT * FROM deskusers";
+    $result = $conn->query($sql);
+
+    $numberOfPeople = $result->num_rows;
 
     if ($numberOfPeople > 0) {
       // output data of each row

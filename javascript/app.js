@@ -1,4 +1,5 @@
 'use strict';
+(function(){
 	var htmlElements = {
 		body: document.querySelector('body'),
 		header: document.querySelector('header'),
@@ -105,3 +106,4 @@
 		}
 	}
 	app.init();
+})();

@@ -319,6 +319,10 @@ th:nth-of-type(5) {
     body {
         font-size: 0.7rem;
     }
+    .date { 
+        padding: 1rem 0;
+        margin-bottom: 0.5rem;
+    }
     .deskvsemployee,.date,#usercal,header {
         width: 93%;
         padding: 0;

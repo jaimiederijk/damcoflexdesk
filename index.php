@@ -1,6 +1,10 @@
 <?php
   session_start();
 
+  // $servername = "10.3.0.63";
+  // $username = "jaapdzq3_jaimie";
+  // $password = "damcosecret";
+  // $dbname = "jaapdzq3_damco";
   $servername = "localhost";
   $username = "root";
   $password = "damcosecret";
@@ -258,7 +262,7 @@
           <button type='submit' name='changeGoingOffice' value='change'><img src='images/".$img."'></button>
         </form>
         <div class='deskvsemployee'>
-          <div class='desk'><span>$numberOfDesk - </span><img src='images/desk.svg'></div>
+          <div class='desk'><p><span>$numberOfDesk</span> - </p><img src='images/desk.svg'></div>
           <div class='employee'><p><span>$numberOfPeople</span> - </p><img src='images/deskperson.svg'></div>
         </div>
       </div>";

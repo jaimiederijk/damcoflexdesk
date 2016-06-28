@@ -1,14 +1,14 @@
 <?php
   session_start();
 
-  // $servername = "10.3.0.63";
-  // $username = "jaapdzq3_jaimie";
-  // $password = "damcosecret";
-  // $dbname = "jaapdzq3_damco";
-  $servername = "localhost";
-  $username = "root";
+  $servername = "10.3.0.63";
+  $username = "jaapdzq3_jaimie";
   $password = "damcosecret";
-  $dbname = "damco";
+  $dbname = "jaapdzq3_damco";
+  // $servername = "localhost";
+  // $username = "root";
+  // $password = "damcosecret";
+  // $dbname = "damco";
   
   if (!isset($_SESSION["dateNumber"])) {
     $_SESSION["dateNumber"]=0;
@@ -249,17 +249,16 @@
         $img="deskperson.svg";
       }
       
-      $resultDeskOccupency = getOccupencyResults($conn,date("Ymd",$timestamp));
+      $resultDeskOccupency = getOccupencyResults($conn,date("Ymd",$timestamp));//<span>".date('d-m',$timestamp)."</span>
       $numberOfPeople=$resultDeskOccupency[1];
       $numberOfDesk=$resultDeskOccupency[0];
       $divId = "d".date('d-m',$timestamp);
 
       $result = $result . "<div id='$divId' class='".$className."'>            
         <form method='post' action=".$action.">
-          <span>".date('d-m',$timestamp)."</span>
           
           <input type='hidden' name='date' value=".$timestamp.">
-          <button type='submit' name='changeGoingOffice' value='change'><img src='images/".$img."'></button>
+          <button type='submit' name='changeGoingOffice' value='change'><span>".date('d-m',$timestamp)."</span><img src='images/".$img."'></button>
         </form>
         <div class='deskvsemployee'>
           <div class='desk'><p><span>$numberOfDesk</span> - </p><img src='images/desk.svg'></div>
@@ -347,7 +346,9 @@ HTML;
 
       <header>
         <h1>Flexdesk occupancy </h1>
-        <!-- <nav><a href="settings.php">Settings<img src="images/gear_icon.svg" alt="menu"></a></nav> -->
+        <nav><!-- <a href="settings.php">Settings<img src="images/gear_icon.svg" alt="menu"> -->
+          <a href="Flexdesksoccupancyapp.pdf">What is this app ?</a>
+        </nav>
       </header>
       
       <section class="date">
@@ -371,6 +372,7 @@ HTML;
             ?>
           
         </section>
+        <section id="legend"><div class="l_today"><span>Today</span></div><div class="l_goingtowork"><span>Office</span></div><div class="l_workfromhome"><span>Home</span></div></section>
         <section id="deskuserinput">
           <?php
             if(isset($_COOKIE["user_id"])) {

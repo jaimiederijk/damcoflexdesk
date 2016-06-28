@@ -1,5 +1,5 @@
 'use strict';
-(function(){
+//(function(){
 	var htmlElements = {
 		body: document.querySelector('body'),
 		header: document.querySelector('header'),
@@ -59,16 +59,20 @@
 		},
 		changeCalState :function(form) {
 			var plusOrMin = 0;
+ 
+			var buttonIndex = util.findElement (form,"button");
+			var imgIndex = util.findElement(form.children[buttonIndex],"img");
+
 			if (util.hasClass(form.parentElement,"emptydesk")) { //going to work
 				plusOrMin = 1;
 				form.parentElement.classList.remove("emptydesk");
-				form.children[1].src="images/deskperson.svg";
+				form.children[buttonIndex].children[imgIndex].src="images/deskperson.svg";
 			} else {// change to not going to work
 				plusOrMin=-1;
 				form.parentElement.classList.add("emptydesk");
-				form.children[1].src="images/desk.svg";
+				form.children[buttonIndex].children[imgIndex].src="images/desk.svg";
 			}
-			if (htmlElements.currentdate.innerHTML.indexOf(form.children[0].innerHTML)>-1) {//main date matches the changed date
+			if (htmlElements.currentdate.innerHTML.indexOf(form.children[buttonIndex].children[imgIndex-1].innerHTML)>-1) {//main date matches the changed date
 				var currentNumber = Number(htmlElements.mainEmployeeNum.innerHTML);
 				
 				currentNumber+=plusOrMin;
@@ -103,7 +107,16 @@
 	var util = {
 		hasClass: function (element, cls) {
 		    return (' ' + element.className + ' ').indexOf(' ' + cls + ' ') > -1;
+		},
+		findElement : function (element,searchthis) {
+			var element = element.children;
+			for (var i = 0; i < element.length; i++) {
+				if (element[i].localName.indexOf(searchthis)>-1) {
+					return i;
+				};
+				
+			};
 		}
 	}
 	app.init();
-})();
+//})();

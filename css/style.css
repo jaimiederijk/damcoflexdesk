@@ -60,7 +60,7 @@ header {
 }
 header a {
 	color: inherit;
-    text-decoration: none;
+    /*text-decoration: none;*/
 }
 header img {
 	height: 2em;
@@ -113,12 +113,28 @@ input[type="text"], input[type="number"] {
 
 }
 input[type="checkbox"] {
-        width: 2rem;
+    width: 2rem;
     height: 2rem;
+
 }
 input[type="submit"] {
         width: 30em;
     height: 2.5em;
+}
+input[type="number"] {
+    width: 4em;
+}
+
+#adduserform , #appform,#termform {
+    background-color: #dbdbdb;
+    padding-right: 1rem;
+}
+#adduserform input[type="text"] {
+    position: absolute;
+    right: 0;
+}
+#adduserform label {
+    position: relative;
 }
 
 label {
@@ -184,6 +200,26 @@ td input[type="text"] {
     background-color: #7289a5;
 }
 
+#legend {
+    margin-bottom: 0.5rem;
+}
+#legend > div {
+    padding: 0.2rem;
+    margin: 0 0.5rem;
+    display: inline-block;
+}
+.l_today {
+    box-shadow: 0px 0px 0px 3px rgb(154, 205, 50);
+}
+.l_workfromhome {
+    background-color: #b8baba;
+}
+.l_goingtowork {
+    color: white;
+    background-color: rgb(44,44,44);
+}
+
+
 
 #deskuserinput {
     font-size: 1.2em;
@@ -195,8 +231,9 @@ td input[type="text"] {
 }
 #deskuserinput> div> div {
     width: 19%;
-    background-color: #a9d6f4;
-    margin-bottom: 1rem;
+    margin-bottom: 0.3rem;
+    /*background-color: #a9d6f4;*/
+    
     /*-webkit-box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);
     box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);*/
@@ -211,7 +248,7 @@ td input[type="text"] {
     
 }
 #deskuserinput .employee {
-    border-left: solid #4f4f4f;
+    border-left: solid #ffffff;
 }
 #deskuserinput .deskvsemployee div > * {
     display: inline-block;
@@ -246,10 +283,13 @@ td input[type="text"] {
 }
 #deskuserinput button {
     background: none;
-    padding-top: 1.3rem;
-    margin-top: -1.5rem;
+    /*padding-top: 1.3rem;
+    margin-top: -1.5rem;*/
     border: none;
     width: 100%;
+    padding-bottom: 0.5rem;
+    border-radius: 10px 10px 0px 0px;
+    background-color: #b8baba;
 }
 #deskuserinput img {
     width: 50%;
@@ -258,11 +298,12 @@ td input[type="text"] {
 }
 #deskuserinput form {
     position: relative;
-    -webkit-box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);
+    /*-webkit-box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);
-    box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);
+    box-shadow: 3px 3px 3px 0px rgba(0,0,0,0.75);*/
     margin: 0;
-    padding-bottom: 1rem;
+    margin-bottom: 0.2rem;
+    /*padding-bottom: 1rem;*/
 }
 #deskuserinput input[type="submit"] {
     position: absolute;
@@ -272,8 +313,11 @@ td input[type="text"] {
     left: 0;
     height: 5em;
 }
-#deskuserinput .week .today {
-    background-color: rgb(154, 205, 50);
+#deskuserinput .week .today button {
+    box-shadow: 0px 0px 0px 3px rgb(154, 205, 50);
+    width: 96%;
+    margin-left: 2%;
+    /*background-color: rgb(154, 205, 50);*/
 }
 #deskuserinput .week .past {
     opacity: 0.5;
@@ -289,13 +333,19 @@ input[type="submit"]:hover, button[type="submit"]:hover {
     cursor: hand; 
 }
 
-#deskuserinput .week .emptydesk {
+#deskuserinput .week .emptydesk button{
     background-color: rgb(44,44,44);
     color:#FFFFFF;
 }
 
-
-
+#deskuserinput .week .emptydesk button span{
+    
+    color:#FFFFFF;
+}
+#deskuserinput .week button span {
+    display: block;
+    font-size: 1.5em;
+} 
 
 
 th:nth-of-type(2) {
@@ -315,9 +365,9 @@ th:nth-of-type(5) {
     color:red;
 }
 
-@media (max-width: 600px) { 
+@media (max-width: 1200px) { 
     body {
-        font-size: 0.7rem;
+        font-size: 0.9rem;
     }
     .date { 
         padding: 1rem 0;
@@ -327,6 +377,44 @@ th:nth-of-type(5) {
         width: 93%;
         padding: 0;
     }
+    /*.date {
+        font-size: 2em;
+    }*/
+    /*.deskvsemployee {
+        font-size: 0.8em;
+    }*/
+   /* #fixeddeskform img {
+        height:2rem;
+    }*/
+    #deskuserinput .deskvsemployee p {
+        color: #0090d4;
+    }
+    #deskuserinput .deskvsemployee div span {
+        font-size: 0.9em;
+        position: relative;
+        top: 0.5rem;
+        color: #FFFFFF;
+        display: block;
+        width: 100%;
+    }    
+   /* #deskuserinput .week button span {
+        display: inline;
+        font-size: 1.5em;
+    }*/
+
+}
+@media (max-width: 600px) { 
+    body {
+        font-size: 0.7rem;
+    }
+    .date { 
+        padding: 1rem 0;
+        margin-bottom: 0.5rem;
+    }
+    /*.deskvsemployee,.date,#usercal,header {
+        width: 93%;
+        padding: 0;
+    }*/
     .date {
         font-size: 2em;
     }
@@ -337,12 +425,23 @@ th:nth-of-type(5) {
         height:2rem;
     }
     #deskuserinput .deskvsemployee p {
-        color: #0090d4;
+        color: #FFFFFF;
     }
     #deskuserinput .deskvsemployee div span {
-        font-size: 1em;
-        position: relative;
-        top: 0.5rem;
+        font-size: 1.2em;
+        /*position: relative;*/
+        top: 0rem;
+        display: inline;
         color: #FFFFFF;
+    } 
+    #deskuserinput .deskvsemployee div > * {
+        width: auto;
+    }  
+    #deskuserinput .week button span {
+        display: inline;
+        font-size: 1em;
+    }
+    #deskuserinput .week .deskvsemployee img {
+        display: none;
     }
 }

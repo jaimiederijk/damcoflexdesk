@@ -1,4 +1,8 @@
 <?php
+  // $servername = "10.3.0.63";
+  // $username = "jaapdzq3_jaimie";
+  // $password = "damcosecret";
+  // $dbname = "jaapdzq3_damco";
   $servername = "localhost";
   $username = "root";
   $password = "damcosecret";
@@ -252,13 +256,13 @@
         <nav><a href="index.php">Flexdesk</a></nav>
         
       </header>
-      <section class="deskvsemployee" >
+      <!-- <section class="deskvsemployee" >
         
         <div id="desk"><?php echo "<span>$numberOfDesk - </span>"; ?><img src="images/desk.svg"></div>
         <div id="employee"><?php echo "<span>$numberOfPeople - </span>"; ?><img src="images/deskperson.svg"></div>
 
         
-      </section>
+      </section> -->
       <section class="settings">
         <section>
         <h1>Desk users </h1>
@@ -294,7 +298,7 @@
                     $resultCal = $conn->query($sqlCal);
                     if ($resultCal->num_rows > 0) {
                       while ( $rowCal = $resultCal->fetch_assoc()) {
-                        $calendar=$calendar. "<td class='tdcal'><div>".$rowCal["url"]."</div></td>";
+                        $calendar=$calendar. "<li>".$rowCal["url"]."</li>";
                       }
                     }
                      
@@ -310,7 +314,7 @@
                               <input type="submit" name="submitAddCal" value="submit">
                             </form>
                           </td>
-                          $calendar
+                          <td class='tdcal'><ul>$calendar</ul></td>
                         </tr>
 HTML;
                   }
@@ -323,7 +327,7 @@ HTML;
         </section>
         <section>
           <h2>Add desk user</h2>
-          <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" >
+          <form id="adduserform" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" >
             <label> Name: <input type="text" name="name"><span class="error">* <?php echo $nameErr;?></span></label><br>
 
             <!-- <label> Default at the office:<input type="checkbox" name="defaultpresent" value="1" checked><span class="error"></span></label><br> -->
@@ -338,7 +342,7 @@ HTML;
           </form>
           <!-- <h2>default present</h2> -->
           <h2>App settings</h2>
-          <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" >
+          <form id="appform" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" >
             <label> Number of desks: <input type="number" name="desks"><span class="error">* <?php echo $deskErr;?></span></label><br>
 
             <label> <input type="submit" name="numOfDesks" value="Change Number"></label>
@@ -381,14 +385,14 @@ HTML;
 
           ?>
           </table>
-          <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" >
+          <form id="termform" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" >
             <label> New term <input type="text" name="term"><span class="error">* <?php echo $termErr;?></span></label><br>
 
             <label> <input type="submit" name="submitAddTerm" value="Add Search Term"></label>
           </form>
 
           <h3>Upload excel file with user data</h3>
-          <p>E-mail me the excel file so that i can upload it directly to the database.</p>
+          <p>E-mail me the excel file so that i can upload it directly to the database. Automated upload is under construction.</p>
           <a href="mailto:jaimiedegiantrijk@gmail.com?Subject=damco%20excel">Send Email</a>
         </section>
       </section> 

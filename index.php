@@ -21,7 +21,7 @@
   require 'php/cronjob.php';
 
   //manualCronjob
-  //loopDays();
+  // loopDays();
 
   $numberOfPeople = 0;
   $fixexdeskNotPresent = 0;
@@ -352,9 +352,9 @@ HTML;
       </header>
       
       <section class="date">
-        <a href="?changeDay=prev" class=""><</a>
+        <!-- <a href="?changeDay=prev" class=""><</a> -->
         <?php echo "<span id='currentDate'> $currentDate </span>" ; ?>
-        <a href="?changeDay=next" class="">></a>
+        <!-- <a href="?changeDay=next" class="">></a> -->
         <!-- <a href="?changeDay=today" id="todaylink" class="">Today</a> -->
       </section>
       <section class="deskvsemployee" id="maindeskvsemployee" >

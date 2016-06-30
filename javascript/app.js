@@ -118,11 +118,11 @@
 			if (!handleForms.checkIfFixed()) {
 
 				htmlElements.fixedDeskStatus.innerHTML= "Fixed";
-				htmlElements.changefixedImg.src = "images/deskpersonlock.svg";
+				htmlElements.changefixedImg.src = "images/desklock.svg";
 			}
 			else {
 				htmlElements.fixedDeskStatus.innerHTML= "Not fixed";
-				htmlElements.changefixedImg.src = "images/deskpersonunlock.svg";
+				htmlElements.changefixedImg.src = "images/deskunlock.svg";
 			}
 		},
 		chooseUser:function(form) {

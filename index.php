@@ -310,11 +310,11 @@ HTML;
         $img="";
         if ($userInfo["fixed"]==1) {
           $showFixed = "true";
-          $img="images/deskpersonlock.svg";
+          $img="images/desklock.svg";
           $fixedDeskText = "Fixed";
         } else {
           $showFixed = "false";
-          $img="images/deskpersonunlock.svg";
+          $img="images/deskunlock.svg";
           $fixedDeskText = "Not fixed";
         }
          

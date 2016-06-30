@@ -1,0 +1,133 @@
+html {
+	background-color: #F7F7F7;
+}
+body {
+	font-family: 'Open Sans', 'Helvetica Neue', 'Arial', sans-serif;
+}
+h1 {
+	margin-bottom: 0.1rem;
+}
+
+
+.desk {
+	display: inline-block;
+}
+.deskvsemployee {
+	background-color: #3d7480;
+	text-align: center;
+
+}
+.deskvsemployee .desk span {
+	color: white;
+    font-size: 4em;
+}
+.deskvsemployee .desk img {
+	width: 6em;
+    padding-left: 1rem;
+}
+
+#select_user button {
+	background-color: rgb(61, 116, 128);
+	position: relative;
+    top: 1rem;
+}
+#select_user button img {
+	width: 3rem;
+}
+#select_user h2 , #select_user form {
+	display: inline-block;
+}
+#select_user form { 
+	margin-left: 1rem;
+}
+
+
+#legend {
+    margin-bottom: 0.5rem;
+}
+#legend > div {
+    padding: 0.2rem;
+    margin: 0 0.5rem;
+    display: inline-block;
+}
+.l_today {
+	/*background-color: #539aff;*/
+    box-shadow: 0px 0px 0px 3px #539aff;
+}
+.l_workfromhome {
+    color: white;
+    background-color: #767676;
+}
+.l_goingtowork {
+    background-color: #ffffff;
+    border: solid rgb(217, 217, 217) 1px;
+}
+
+
+
+/*Deskuserinput*/
+#deskuserinput > div > div {
+	width: 20%;
+}
+#deskuserinput .week {
+	display: flex;
+    flex-wrap: wrap;
+}
+#deskuserinput .weeknumber {
+	width: 100%;
+}
+#deskuserinput form {
+	margin-bottom:0; 
+}
+#deskuserinput .desk span {
+	font-size: 1em;
+}
+#deskuserinput .desk {
+	display: block;
+	padding-bottom: 0.1rem;
+}
+#deskuserinput button {
+	width: 100%;
+	background-color: white;
+    height: 4rem;
+}
+#deskuserinput button span {
+	font-size: 1.5em;
+}    
+#deskuserinput .desk p {
+	margin: 0;
+	display: inline-block;
+}
+#deskuserinput .desk img {
+	width: 40%;
+}
+#deskuserinput .weekdays {
+	color: white;
+	padding: 0.1rem 0rem;
+	text-align: center;
+	background-color: rgb(85, 85, 85);
+}
+#deskuserinput .today button {
+	box-shadow: 0px 0px 0px 3px #539aff inset;
+}
+#deskuserinput .past {
+	opacity: 0.2;
+}
+#deskuserinput .past button {
+	background-color: rgb(153, 153, 153);
+}
+#deskuserinput .emptydesk button {
+	color: white;
+	background-color: #767676;
+}
+
+
+@media (min-width: 600px) {
+	#wrapper {
+		max-width: 800px;
+	    margin: auto;
+	}
+	#deskuserinput .desk span {
+		font-size: 2em;
+	}
+}	

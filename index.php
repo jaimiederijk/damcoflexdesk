@@ -21,7 +21,7 @@
   require 'php/cronjob.php';
 
   //manualCronjob
-  // loopDays();
+  //loopDays();
 
   $numberOfPeople = 0;
   $fixexdeskNotPresent = 0;
@@ -122,6 +122,7 @@
   $resultDeskOccupency = getOccupencyResults($conn,$currentShortDate);
   $numberOfPeople=$resultDeskOccupency[1];
   $numberOfDesk=$resultDeskOccupency[0];
+  $freeDesk=$numberOfDesk-$numberOfPeople;
 
 
   function setUserCookie ($id) {
@@ -216,7 +217,7 @@
     $result = "";
     //$week = 0;
     for ($i=0; $i < $weeks; $i++) {
-      $result = $result . "<div class='weeknumber'><span> Week: ".date('W',strtotime('+'.$i.' week', $today))."</span></div>";
+      // $result = $result . "<div class='weeknumber'><span> Week: ".date('W',strtotime('+'.$i.' week', $today))."</span></div>";
       $result = $result .  createWeekdays(strtotime('+'.$i.' week', $currentWeek),$conn);
     }
     return $result;
@@ -249,20 +250,21 @@
         $img="deskperson.svg";
       }
       
-      $resultDeskOccupency = getOccupencyResults($conn,date("Ymd",$timestamp));//<span>".date('d-m',$timestamp)."</span>
+      $resultDeskOccupency = getOccupencyResults($conn,date("Ymd",$timestamp));//<img src='images/".$img."'><span>".date('d-m',$timestamp)."</span><img src='images/desk.svg'><img src='images/deskperson.svg'><div class='employee'><p><span>$numberOfPeople</span></p></div>
       $numberOfPeople=$resultDeskOccupency[1];
       $numberOfDesk=$resultDeskOccupency[0];
+      $freeDesk=$numberOfDesk-$numberOfPeople;
       $divId = "d".date('d-m',$timestamp);
 
       $result = $result . "<div id='$divId' class='".$className."'>            
         <form method='post' action=".$action.">
           
           <input type='hidden' name='date' value=".$timestamp.">
-          <button type='submit' name='changeGoingOffice' value='change'><span>".date('d-m',$timestamp)."</span><img src='images/".$img."'></button>
+          <button type='submit' name='changeGoingOffice' value='change'><span>".date('d-m',$timestamp)."</span></button>
         </form>
         <div class='deskvsemployee'>
-          <div class='desk'><p><span>$numberOfDesk</span> - </p><img src='images/desk.svg'></div>
-          <div class='employee'><p><span>$numberOfPeople</span> - </p><img src='images/deskperson.svg'></div>
+          <div class='desk'><p><span>$freeDesk</span></p><img src='images/desk.svg'></div>
+          
         </div>
       </div>";
     }
@@ -290,6 +292,7 @@
         
         $optionText = getUsersOptions($conn);
         echo <<<HTML
+        <h2>Select user</h2>
         <p>Select your name to display your calendar</p>
 
         <form method="post" action=$action>
@@ -312,7 +315,7 @@ HTML;
         } else {
           $showFixed = "false";
           $img="images/deskpersonunlock.svg";
-          $fixedDeskText = "Not Fixed";
+          $fixedDeskText = "Not fixed";
         }
          
           //echo "Cookie is set!<br>";
@@ -337,7 +340,7 @@ HTML;
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/app.css">
     <title>flexdesk</title>
 
   </head>
@@ -347,7 +350,7 @@ HTML;
       <header>
         <h1>Flexdesk occupancy </h1>
         <nav><!-- <a href="settings.php">Settings<img src="images/gear_icon.svg" alt="menu"> -->
-          <a href="Flexdesksoccupancyapp.pdf">What is this app ?</a>
+          <!-- <a href="Flexdesksoccupancyapp.pdf">What is this app ?</a> -->
         </nav>
       </header>
       
@@ -359,14 +362,14 @@ HTML;
       </section>
       <section class="deskvsemployee" id="maindeskvsemployee" >
         
-        <div class="desk"><?php echo "<span>$numberOfDesk - </span>"; ?><img src="images/desk.svg"></div>
-        <div class="employee"><?php echo "<span>$numberOfPeople</span> - "; ?><img src="images/deskperson.svg"></div>
+        <div class="desk"><?php echo "<span>$freeDesk</span>"; ?><img src="images/desk.svg"></div>
+        <!-- <div class="employee"><?php ; ?><img src="images/deskperson.svg"></div>echo "<span>$numberOfPeople</span>" -->
 
         
       </section>
       <section id="usercal">
         <section id="select_user">
-          <h2>Select user</h2>
+          
           <?php
                createUserStuff($conn);
             ?>
@@ -378,7 +381,11 @@ HTML;
             if(isset($_COOKIE["user_id"])) {
               echo   
               "<div class='week'>
-                <div><span>Mon</span></div><div><span>Tue</span></div><div><span>Wed</span></div><div><span>Thu</span></div><div><span>Fri</span></div>         
+                <div class='weekdays'><span>Mon</span></div>
+                <div class='weekdays'><span>Tue</span></div>
+                <div class='weekdays'><span>Wed</span></div>
+                <div class='weekdays'><span>Thu</span></div>
+                <div class='weekdays'><span>Fri</span></div>     
                   ". loopThroughWeeks(4,$conn)."      
               </div>";
 

@@ -70,7 +70,7 @@
 			} else {// change to not going to work
 				plusOrMin=-1;
 				form.parentElement.classList.add("emptydesk");
-				form.children[buttonIndex].children[imgIndex].src="images/desk.svg";
+				form.children[buttonIndex].children[imgIndex].src="images/deskpersonhome.svg";
 			}
 			if (htmlElements.currentdate.innerHTML.indexOf(form.children[buttonIndex].children[imgIndex-1].innerHTML)>-1) {//main date matches the changed date
 				var currentNumber = Number(htmlElements.mainEmployeeNum.innerHTML);

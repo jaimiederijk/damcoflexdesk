@@ -1,14 +1,14 @@
 <?php
   session_start();
 
-  $servername = "10.3.0.63";
-  $username = "jaapdzq3_jaimie";
-  $password = "damcosecret";
-  $dbname = "jaapdzq3_damco";
-  // $servername = "localhost";
-  // $username = "root";
+  // $servername = "10.3.0.63";
+  // $username = "jaapdzq3_jaimie";
   // $password = "damcosecret";
-  // $dbname = "damco";
+  // $dbname = "jaapdzq3_damco";
+  $servername = "localhost";
+  $username = "root";
+  $password = "damcosecret";
+  $dbname = "damco";
   
   if (!isset($_SESSION["dateNumber"])) {
     $_SESSION["dateNumber"]=0;
@@ -243,7 +243,7 @@
         $className="past";
       }
       if(checkCustomCalendar($conn,$timestamp)) {
-        $img="desk.svg";
+        $img="deskpersonhome.svg";
         $className=$className." emptydesk";
       } else {
         $img="deskperson.svg";

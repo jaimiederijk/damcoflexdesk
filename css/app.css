@@ -1,30 +1,27 @@
+* {
+	box-sizing: border-box;
+	/*padding: 0;
+	margin: 0;
+	outline: 1px solid lime;*/
+}
 html {
+	width: 100%;
+	overflow-x:hidden; 
 	background-color: #F7F7F7;
 }
 body {
-	font-family: 'Open Sans', 'Helvetica Neue', 'Arial', sans-serif;
-}
-h1 {
-	margin-bottom: 0.1rem;
+	font-family:'Roboto Condensed','Open Sans', 'Helvetica Neue', 'Arial', sans-serif;
+	margin: 0;
 }
 
+img {
+	width: 3em;
+}
 
-.desk {
-	display: inline-block;
+header h1 {
+	font-size: 1em;
 }
-.deskvsemployee {
-	background-color: #3d7480;
-	text-align: center;
 
-}
-.deskvsemployee .desk span {
-	color: white;
-    font-size: 4em;
-}
-.deskvsemployee .desk img {
-	width: 6em;
-    padding-left: 1rem;
-}
 
 #select_user button {
 	background-color: rgb(61, 116, 128);
@@ -66,70 +63,68 @@ h1 {
 }
 
 
+.deskvsemployee {
+	background-color: #136bab;
+}
 
-/*Deskuserinput*/
-#deskuserinput > div > div {
-	width: 20%;
-}
-#deskuserinput .week {
-	display: flex;
-    flex-wrap: wrap;
-}
-#deskuserinput .weeknumber {
+#maindeskvsemployee {
+	/*background-color: blue;*/
 	width: 100%;
 }
-#deskuserinput form {
-	margin-bottom:0; 
+#maindeskvsemployee .desk {
+	    position: relative;
+    text-align: center;
 }
-#deskuserinput .desk span {
-	font-size: 1em;
+#maindeskvsemployee img {
+	width: 2em;
+	    padding: 0 1rem;
+	    height: 2em;
+    box-sizing: initial;
+	/*transform: scale(0.7);*/
+}
+#maindeskvsemployee span {
+	font-size: 2em;
+	color: white;
+}
+
+#deskuserinput h3 {
+	margin: 0;
 }
 #deskuserinput .desk {
-	display: block;
-	padding-bottom: 0.1rem;
-}
-#deskuserinput button {
-	width: 100%;
-	background-color: white;
-    height: 4rem;
-}
-#deskuserinput button span {
-	font-size: 1.2em;
-}    
-#deskuserinput .desk p {
-	margin: 0;
-	display: inline-block;
-}
-#deskuserinput .desk img {
-	width: 40%;
-}
-#deskuserinput .weekdays {
 	color: white;
-	padding: 0.3rem 0rem;
 	text-align: center;
-	background-color: rgb(85, 85, 85);
 }
-#deskuserinput .today button {
-	box-shadow: 0px 0px 0px 3px #539aff inset;
+#deskuserinput .week > div  {
+	display: flex;
 }
-#deskuserinput .past {
-	opacity: 0.2;
+#deskuserinput .week > div > form {
+	width: 20%;
+	background-color: black;
+	margin: 0;
+	padding: 1rem 0;
 }
-#deskuserinput .past button {
-	background-color: rgb(153, 153, 153);
+#deskuserinput .week > div > div {
+	width: 80%;
 }
-#deskuserinput .emptydesk button {
+#deskuserinput .week button {
+	width: 100%;
+	background-color: transparent;
+	border: none;
 	color: white;
-	background-color: #767676;
+}
+#deskuserinput form {
+	border-left:#a3a3a3 solid 0.5rem;
 }
 
-
-@media (min-width: 600px) {
-	#wrapper {
-		max-width: 800px;
-	    margin: auto;
-	}
-	#deskuserinput .desk span {
-		font-size: 2em;
-	}
-}	
+#deskuserinput .emptydesk form  {
+	border-left:#04a02b solid 0.5rem !important;
+}
+.emptydesk form button{
+	/*margin-left: -0.25rem;*/
+}
+.positive {
+	border-left: #c10000 solid 0.5rem;
+}
+.negative {
+	border-left: #c10000 solid 0.5rem;
+}

@@ -250,7 +250,7 @@
         $img="deskperson.svg";
       }
       
-      $resultDeskOccupency = getOccupencyResults($conn,date("Ymd",$timestamp));//<img src='images/".$img."'><span>".date('d-m',$timestamp)."</span><img src='images/desk.svg'><img src='images/deskperson.svg'><div class='employee'><p><span>$numberOfPeople</span></p></div>
+      $resultDeskOccupency = getOccupencyResults($conn,date("Ymd",$timestamp));//<img src='images/".$img."'><span>".date('d-m',$timestamp)."</span><img src='images/desk.svg'><img src='images/deskperson.svg'><div class='employee'><p><span>$numberOfPeople</span></p></div><img src='images/desk.svg'>
       $numberOfPeople=$resultDeskOccupency[1];
       $numberOfDesk=$resultDeskOccupency[0];
       $freeDesk=$numberOfDesk-$numberOfPeople;
@@ -260,10 +260,10 @@
         <form method='post' action=".$action.">
           
           <input type='hidden' name='date' value=".$timestamp.">
-          <button type='submit' name='changeGoingOffice' value='change'><span>".date('d-m',$timestamp)."</span></button>
+          <button type='submit' name='changeGoingOffice' value='change'><h3>".date('D',$timestamp)."</h3><span data-date=".date('d-m',$timestamp).">".date('d',$timestamp)."</span></button>
         </form>
         <div class='deskvsemployee'>
-          <div class='desk'><p><span>$freeDesk</span></p><img src='images/desk.svg'></div>
+          <div class='desk'><p>available desk: <span>$freeDesk</span></p></div>
           
         </div>
       </div>";
@@ -317,18 +317,18 @@ HTML;
           $img="images/deskunlock.svg";
           $fixedDeskText = "Not fixed";
         }
-         
-          //echo "Cookie is set!<br>";
+         // <form id='fixeddeskform' method="post" action=$action>
+         //    <label for="changefixed" data-showfixed="$showFixed">$fixedDeskText </label>
+         //      <input type="hidden" name="userId" value=$userId>
+         //      <button id="changefixed" type="submit" name="changeFixed" value="change"><img src=$img></button>
+          //echo "Cookie is set!<br>";</form>
         echo <<<HTML
           <h2>Calendar: $userName </h2>
           
           
-          <form id='fixeddeskform' method="post" action=$action>
-            <label for="changefixed" data-showfixed="$showFixed">$fixedDeskText </label>
-              <input type="hidden" name="userId" value=$userId>
-              <button id="changefixed" type="submit" name="changeFixed" value="change"><img src=$img></button>
+          
             
-          </form>
+          
           
 HTML;
     }
@@ -340,6 +340,8 @@ HTML;
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Condensed' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/app.css">
     <title>flexdesk</title>
 
@@ -364,7 +366,11 @@ HTML;
         
         <div class="desk"><?php echo "<span>$freeDesk</span>"; ?><img src="images/desk.svg"></div>
         <!-- <div class="employee"><?php ; ?><img src="images/deskperson.svg"></div>echo "<span>$numberOfPeople</span>" -->
-
+<!-- <div class='weekdays'><span>Mon</span></div>
+                <div class='weekdays'><span>Tue</span></div>
+                <div class='weekdays'><span>Wed</span></div>
+                <div class='weekdays'><span>Thu</span></div>
+                <div class='weekdays'><span>Fri</span></div> -->
         
       </section>
       <section id="usercal">
@@ -375,26 +381,13 @@ HTML;
             ?>
           
         </section>
-        <?php
-            if(isset($_COOKIE["user_id"])) {
-              echo
-                "<section id='legend'>
-                  <div class='l_today'><span>Today</span></div>
-                  <div class='l_goingtowork'><span>Office</span></div>
-                  <div class='l_workfromhome'><span>Home</span></div>
-                </section>";
-            }
-        ?>    
+           
         <section id="deskuserinput">
           <?php
             if(isset($_COOKIE["user_id"])) {
               echo   
               "<div class='week'>
-                <div class='weekdays'><span>Mon</span></div>
-                <div class='weekdays'><span>Tue</span></div>
-                <div class='weekdays'><span>Wed</span></div>
-                <div class='weekdays'><span>Thu</span></div>
-                <div class='weekdays'><span>Fri</span></div>     
+                     
                   ". loopThroughWeeks(4,$conn)."      
               </div>";
 

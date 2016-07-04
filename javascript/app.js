@@ -5,6 +5,7 @@
 		header: document.querySelector('header'),
 		forms: document.querySelectorAll("form"),
 		allDeskNumbers : document.querySelectorAll (".deskvsemployee .desk span"),
+		allDesk : document.querySelectorAll (".deskvsemployee "),
 		currentdate: document.querySelector("#currentdate"),
 		mainEmployeeNum: document.querySelector("#maindeskvsemployee .desk span"),
 		changefixedImg: document.querySelector("#changefixed img"),
@@ -15,7 +16,7 @@
 	var app = {
 		init: function() {
 			handleForms.addSubmitListeners();
-			
+			util.checkResultAndAdClass();
 		}
 	};
 
@@ -143,6 +144,18 @@
 				};
 				
 			};
+		},
+		checkResultAndAdClass : function () {
+			for (var i = htmlElements.allDeskNumbers.length - 1; i >= 0; i--) {
+				if (Number(htmlElements.allDeskNumbers[i].innerHTML)>-1) {
+					htmlElements.allDesk[i].classList.remove("negative");
+					htmlElements.allDesk[i].classList.add("positive");
+				} else {
+					htmlElements.allDesk[i].classList.add("negative");
+					htmlElements.allDesk[i].classList.remove("positive");
+				}
+				
+			}
 		}
 	}
 	app.init();

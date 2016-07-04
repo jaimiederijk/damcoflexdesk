@@ -375,7 +375,16 @@ HTML;
             ?>
           
         </section>
-        <section id="legend"><div class="l_today"><span>Today</span></div><div class="l_goingtowork"><span>Office</span></div><div class="l_workfromhome"><span>Home</span></div></section>
+        <?php
+            if(isset($_COOKIE["user_id"])) {
+              echo
+                "<section id='legend'>
+                  <div class='l_today'><span>Today</span></div>
+                  <div class='l_goingtowork'><span>Office</span></div>
+                  <div class='l_workfromhome'><span>Home</span></div>
+                </section>";
+            }
+        ?>    
         <section id="deskuserinput">
           <?php
             if(isset($_COOKIE["user_id"])) {

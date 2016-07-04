@@ -40,7 +40,9 @@ h1 {
 #select_user form { 
 	margin-left: 1rem;
 }
-
+#select_user form > * {
+	font-size: 1.2em;
+}
 
 #legend {
     margin-bottom: 0.5rem;
@@ -92,7 +94,7 @@ h1 {
     height: 4rem;
 }
 #deskuserinput button span {
-	font-size: 1.5em;
+	font-size: 1.2em;
 }    
 #deskuserinput .desk p {
 	margin: 0;
@@ -103,7 +105,7 @@ h1 {
 }
 #deskuserinput .weekdays {
 	color: white;
-	padding: 0.1rem 0rem;
+	padding: 0.3rem 0rem;
 	text-align: center;
 	background-color: rgb(85, 85, 85);
 }

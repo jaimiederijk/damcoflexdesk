@@ -73,12 +73,18 @@
 
 			if (util.hasClass(form.parentElement,"emptydesk")) { //going to work
 				plusOrMin = -1;
-				form.parentElement.classList.remove("emptydesk");
-				
+				if (form.parentElement.classList) {
+					form.parentElement.classList.remove("emptydesk");
+				} else {
+					form.parentElement.className = htmlElements.button.className.replace(/\bmystyle/g, "");
+				}
 			} else {// change to not going to work
 				plusOrMin=1;
-				form.parentElement.classList.add("emptydesk");
-				
+				if (form.parentElement.classList) {
+					form.parentElement.classList.add("emptydesk");
+				} else {
+					form.parentElement.className = "emptydesk";
+				}
 			}
 			
 			
@@ -142,11 +148,22 @@
 		checkResultAndAdClass : function () {
 			for (var i = htmlElements.allDeskNumbers.length - 1; i >= 0; i--) {
 				if (Number(htmlElements.allDeskNumbers[i].innerHTML)>-1) {
-					htmlElements.allDesk[i].classList.remove("negative");
-					htmlElements.allDesk[i].classList.add("positive");
+					if (htmlElements.allDesk[i].classList) {
+						htmlElements.allDesk[i].classList.remove("negative");
+						htmlElements.allDesk[i].classList.add("positive");
+					} else {
+						htmlElements.allDesk[i].className = htmlElements.allDesk[i].className.replace(/\bmystyle/g, "");
+						htmlElements.allDesk[i].className = "positive";
+					}
+					
 				} else {
-					htmlElements.allDesk[i].classList.add("negative");
-					htmlElements.allDesk[i].classList.remove("positive");
+					if (htmlElements.allDesk[i].classList) {
+						htmlElements.allDesk[i].classList.remove("positive");
+						htmlElements.allDesk[i].classList.add("negative");
+					} else {
+						htmlElements.allDesk[i].className = htmlElements.allDesk[i].className.replace(/\bmystyle/g, "");
+						htmlElements.allDesk[i].className = "negative";
+					}
 				}
 				
 			}

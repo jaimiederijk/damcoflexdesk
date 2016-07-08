@@ -160,9 +160,7 @@
     $deskuser_id=getUserId();
 
     $customCalendarId = checkCustomCalendar($conn,$date);
-    //if(isset($_COOKIE["user_id"])) {//!!!!!!!!!!more backup
-        //$deskuser_id=;
-    //}
+
     
     if ($customCalendarId) {
       $sql = "DELETE FROM `custom_calendar` WHERE custom_calendar_id=". $customCalendarId;//;//
@@ -228,9 +226,6 @@
     for ($i = 0; $i < 5; $i++) {
       $className="";
       $img="";
-      //checkCustomCalendar($conn,$user);
-      
-        //$days[] = strftime('%A', $timestamp);
       $timestamp = strtotime('+1 day', $timestamp);
       if ($timestamp==strtotime('today')) {
         $className="today";
@@ -247,7 +242,7 @@
         $img="deskperson.svg";
       }
       
-      $resultDeskOccupency = getOccupencyResults($conn,date("Ymd",$timestamp));//<img src='images/".$img."'><span>".date('d-m',$timestamp)."</span><img src='images/desk.svg'><img src='images/deskperson.svg'><div class='employee'><p><span>$numberOfPeople</span></p></div><img src='images/desk.svg'>
+      $resultDeskOccupency = getOccupencyResults($conn,date("Ymd",$timestamp));
       $numberOfPeople=$resultDeskOccupency[1];
       $numberOfDesk=$resultDeskOccupency[0];
       $freeDesk=$numberOfDesk-$numberOfPeople;
@@ -320,11 +315,7 @@ HTML;
           $img="images/deskunlock.svg";
           $fixedDeskText = "Not fixed";
         }
-         // <form id='fixeddeskform' method="post" action=$action>
-         //    <label for="changefixed" data-showfixed="$showFixed">$fixedDeskText </label>
-         //      <input type="hidden" name="userId" value=$userId>
-         //      <button id="changefixed" type="submit" name="changeFixed" value="change"><img src=$img></button>
-          //echo "Cookie is set!<br>";</form>
+
         echo <<<HTML
           <h2>Calendar: $userName </h2>
           
@@ -354,14 +345,6 @@ HTML;
   </head>
   <body>
     <div id="wrapper">
-
-      
-      
-      
-        <!-- <a href="?changeDay=prev" class=""><</a> -->
-        
-        <!-- <a href="?changeDay=next" class="">></a> -->
-        <!-- <a href="?changeDay=today" id="todaylink" class="">Today</a><a href="settings.php">Settings<img src="images/gear_icon.svg" alt="menu"> -->
       
       <?php
         if(!isset($_COOKIE["user_id"])) {

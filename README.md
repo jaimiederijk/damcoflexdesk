@@ -1,11 +1,14 @@
 # Flex desks occupancy app
 
 ## The app
-
-The app is a tool that can help employees determine if they want to work from home or go to the office based on the availability of a working space. The app shows the number of desks available based on the number of people that are expected to go to the office. 
 [Live version](http://jaimiederijk.nl/damco/)
 
+The app is a tool that can help employees determine if they want to work from home or go to the office based on the availability of a working space. The app shows the number of desks available based on the number of people that are expected to go to the office. 
+
+
 The app takes it's data from the users callendars. The callendars are gathered on the admin page and conected to the users. Every half hour a cronjob is run that reads these callendars and updates the app.
+
+
 
 ## Main functions
 
@@ -26,6 +29,23 @@ It uses PHP and MySQL.
 - In MySQL Create a database named 'damco' and import this [SQL file](damco (2).sql)
 - Change the connection.php to you own settings
 - Go to your Xampp localhost and here you will find the app.
+
+## App structure
+```
+	index.php 							//landing page. only page that the user sees
+	settings.php 						//setting for the admin adding users callendars and searchterms
+		/php 							//php folder
+			class.iCalReader.php 		//library that helps parsing ics callendars after my own failed.
+			connection.php 				// unified place for data needed to conect to the DB
+			cronjob.php 				// file that is called for the cronjob. Can set the number of days to parse
+			parsecallendar.php 			// Extracting the needed data from the callendar data 
+		/javascript
+			app.js 						// the only js file
+		/css
+			app.css 					// css for the app index page
+			settings.css 				// css for the settings
+```
+
 
 ## Minor Everything web applied
 Here I will explain how I applied what we have learned.
@@ -80,6 +100,65 @@ I intercept all submits and send them to the procesForm function were the defaul
 			return false;
 		},
 ```
+## Basic functionality
+All of the variable content in this app is created by php. Functions like createWeekdays generate the important html. CreateWeekdays creates the html for the 5 work days in a week. The function takes a unix timstamp and a sql connection as arguments. The timestamp functions as the starting point of the week. The function starts a loop of 5 for the five days in a week. In the loop it determines if the day that it is currently creating has any characteristics that require a classname. The getOccupencyResults functions returns the data from the database and the customcallendar. This data forms the basis for the app. From this data I can determine the amount of freedesk available which get stored in the $freedesk varaible. The form contains a input hidden to send along extra data to the receiving end.   
+
+```
+function createWeekdays($sundayTimeStamp,$conn) {
+    $timestamp = $sundayTimeStamp;
+      //$days = array();strtotime('previous Sunday');
+    $action =  htmlspecialchars($_SERVER["PHP_SELF"]);
+    $result = "";
+    $numberOfDesk=0;
+    $numberOfPeople=0;
+
+    for ($i = 0; $i < 5; $i++) {
+      $className="";
+      $img="";
+      $timestamp = strtotime('+1 day', $timestamp);
+      if ($timestamp==strtotime('today')) {
+        $className="today";
+      } else if ($timestamp<strtotime('today')) {
+        $className="past";
+      }
+      if ($i == 0) {
+        $className=$className." monday";
+      }
+      if(checkCustomCalendar($conn,$timestamp)) {
+        $img="deskpersonhome.svg";
+        $className=$className." emptydesk";
+      } else {
+        $img="deskperson.svg";
+      }
+      
+      $resultDeskOccupency = getOccupencyResults($conn,date("Ymd",$timestamp));
+      $numberOfPeople=$resultDeskOccupency[1];
+      $numberOfDesk=$resultDeskOccupency[0];
+      $freeDesk=$numberOfDesk-$numberOfPeople;
+      $divId = "d".date('d-m',$timestamp);
+
+      $result = $result . "<div id='$divId' class='".$className."'>            
+        <form method='post' action=".$action.">
+          
+          <input type='hidden' name='date' value=".$timestamp.">
+          <button type='submit' name='changeGoingOffice' value='change'>
+            <div>
+              <h3>".date('D',$timestamp)."</h3>
+              <span data-date=".date('d-m',$timestamp).">".date('d',$timestamp)."</span>
+            </div>
+            <div class='deskvsemployee'>
+              <p class='desk'>available desk: <span>$freeDesk</span></p>
+              
+            </div>
+          </button>
+        </form>
+        
+      </div>";
+    }
+    return $result;
+  }
+```
+
 ## Gather and parsing the calendars
 Most calendar apps allow the user to share their calendar. I'm using this functionality to get acces and get the data that I need. I store the calendar urls in a sql database. Using php I loop through all the users urls and see if there are any positive matches.
 The function below is the start of the search through the calendar.

@@ -186,6 +186,7 @@ td input[type="text"] {
 #select_user select {
     font-size: 1.5em;
 }
+
 #fixeddeskform {
     position: absolute;
     right: 0;

@@ -1,14 +1,7 @@
 <?php
   session_start();
 
-  // $servername = "10.3.0.63";
-  // $username = "jaapdzq3_jaimie";
-  // $password = "damcosecret";
-  // $dbname = "jaapdzq3_damco";
-  $servername = "localhost";
-  $username = "root";
-  $password = "damcosecret";
-  $dbname = "damco";
+  require 'php/connection.php';
   
   if (!isset($_SESSION["dateNumber"])) {
     $_SESSION["dateNumber"]=0;
@@ -21,7 +14,7 @@
   require 'php/cronjob.php';
 
   //manualCronjob
-  // loopDays();
+  //loopDays();
 
   $numberOfPeople = 0;
   $fixexdeskNotPresent = 0;
@@ -122,6 +115,7 @@
   $resultDeskOccupency = getOccupencyResults($conn,$currentShortDate);
   $numberOfPeople=$resultDeskOccupency[1];
   $numberOfDesk=$resultDeskOccupency[0];
+  $freeDesk=$numberOfDesk-$numberOfPeople;
 
 
   function setUserCookie ($id) {
@@ -242,6 +236,9 @@
       } else if ($timestamp<strtotime('today')) {
         $className="past";
       }
+      if ($i == 0) {
+        $className=$className." monday";
+      }
       if(checkCustomCalendar($conn,$timestamp)) {
         $img="deskpersonhome.svg";
         $className=$className." emptydesk";
@@ -249,21 +246,28 @@
         $img="deskperson.svg";
       }
       
-      $resultDeskOccupency = getOccupencyResults($conn,date("Ymd",$timestamp));//<span>".date('d-m',$timestamp)."</span>
+      $resultDeskOccupency = getOccupencyResults($conn,date("Ymd",$timestamp));//<img src='images/".$img."'><span>".date('d-m',$timestamp)."</span><img src='images/desk.svg'><img src='images/deskperson.svg'><div class='employee'><p><span>$numberOfPeople</span></p></div><img src='images/desk.svg'>
       $numberOfPeople=$resultDeskOccupency[1];
       $numberOfDesk=$resultDeskOccupency[0];
+      $freeDesk=$numberOfDesk-$numberOfPeople;
       $divId = "d".date('d-m',$timestamp);
 
       $result = $result . "<div id='$divId' class='".$className."'>            
         <form method='post' action=".$action.">
           
           <input type='hidden' name='date' value=".$timestamp.">
-          <button type='submit' name='changeGoingOffice' value='change'><span>".date('d-m',$timestamp)."</span><img src='images/".$img."'></button>
+          <button type='submit' name='changeGoingOffice' value='change'>
+            <div>
+              <h3>".date('D',$timestamp)."</h3>
+              <span data-date=".date('d-m',$timestamp).">".date('d',$timestamp)."</span>
+            </div>
+            <div class='deskvsemployee'>
+              <p class='desk'>available desk: <span>$freeDesk</span></p>
+              
+            </div>
+          </button>
         </form>
-        <div class='deskvsemployee'>
-          <div class='desk'><p><span>$numberOfDesk</span> - </p><img src='images/desk.svg'></div>
-          <div class='employee'><p><span>$numberOfPeople</span> - </p><img src='images/deskperson.svg'></div>
-        </div>
+        
       </div>";
     }
     return $result;
@@ -290,6 +294,7 @@
         
         $optionText = getUsersOptions($conn);
         echo <<<HTML
+        <h2>Select user</h2>
         <p>Select your name to display your calendar</p>
 
         <form method="post" action=$action>
@@ -307,25 +312,25 @@ HTML;
         $img="";
         if ($userInfo["fixed"]==1) {
           $showFixed = "true";
-          $img="images/deskpersonlock.svg";
+          $img="images/desklock.svg";
           $fixedDeskText = "Fixed";
         } else {
           $showFixed = "false";
-          $img="images/deskpersonunlock.svg";
-          $fixedDeskText = "Not Fixed";
+          $img="images/deskunlock.svg";
+          $fixedDeskText = "Not fixed";
         }
-         
-          //echo "Cookie is set!<br>";
+         // <form id='fixeddeskform' method="post" action=$action>
+         //    <label for="changefixed" data-showfixed="$showFixed">$fixedDeskText </label>
+         //      <input type="hidden" name="userId" value=$userId>
+         //      <button id="changefixed" type="submit" name="changeFixed" value="change"><img src=$img></button>
+          //echo "Cookie is set!<br>";</form>
         echo <<<HTML
           <h2>Calendar: $userName </h2>
           
           
-          <form id='fixeddeskform' method="post" action=$action>
-            <label for="changefixed" data-showfixed="$showFixed">$fixedDeskText </label>
-              <input type="hidden" name="userId" value=$userId>
-              <button id="changefixed" type="submit" name="changeFixed" value="change"><img src=$img></button>
+          
             
-          </form>
+          
           
 HTML;
     }
@@ -337,48 +342,62 @@ HTML;
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="css/style.css">
+    
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Condensed' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="css/app.css">
     <title>flexdesk</title>
+    <script>
+      'article aside footer header nav section time'.replace(/\w+/g,function(n){document.createElement(n)});
+    </script>
 
   </head>
   <body>
     <div id="wrapper">
 
-      <header>
-        <h1>Flexdesk occupancy </h1>
-        <nav><!-- <a href="settings.php">Settings<img src="images/gear_icon.svg" alt="menu"> -->
-          <a href="Flexdesksoccupancyapp.pdf">What is this app ?</a>
-        </nav>
-      </header>
       
-      <section class="date">
+      
+      
         <!-- <a href="?changeDay=prev" class=""><</a> -->
-        <?php echo "<span id='currentDate'> $currentDate </span>" ; ?>
+        
         <!-- <a href="?changeDay=next" class="">></a> -->
-        <!-- <a href="?changeDay=today" id="todaylink" class="">Today</a> -->
-      </section>
-      <section class="deskvsemployee" id="maindeskvsemployee" >
-        
-        <div class="desk"><?php echo "<span>$numberOfDesk - </span>"; ?><img src="images/desk.svg"></div>
-        <div class="employee"><?php echo "<span>$numberOfPeople</span> - "; ?><img src="images/deskperson.svg"></div>
-
-        
-      </section>
+        <!-- <a href="?changeDay=today" id="todaylink" class="">Today</a><a href="settings.php">Settings<img src="images/gear_icon.svg" alt="menu"> -->
+      
+      <?php
+        if(!isset($_COOKIE["user_id"])) {
+          echo
+          "<header>
+            <h1>Flexdesk occupancy </h1>
+            <nav>
+              
+            </nav>
+          </header>
+          
+          <section class='deskvsemployee' id='maindeskvsemployee'>
+            <div class='date'>
+              <span id='currentDate'> $currentDate </span>
+            </div>
+            <div class='desk'><span>$freeDesk</span><img src='images/desk.svg'></div>
+            
+            
+          </section>";
+        }
+            
+      ?>
       <section id="usercal">
         <section id="select_user">
-          <h2>Select user</h2>
+          
           <?php
                createUserStuff($conn);
             ?>
           
         </section>
-        <section id="legend"><div class="l_today"><span>Today</span></div><div class="l_goingtowork"><span>Office</span></div><div class="l_workfromhome"><span>Home</span></div></section>
+           
         <section id="deskuserinput">
           <?php
             if(isset($_COOKIE["user_id"])) {
               echo   
               "<div class='week'>
-                <div><span>Mon</span></div><div><span>Tue</span></div><div><span>Wed</span></div><div><span>Thu</span></div><div><span>Fri</span></div>         
+                     
                   ". loopThroughWeeks(4,$conn)."      
               </div>";
 

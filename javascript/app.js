@@ -4,15 +4,19 @@
 		body: document.querySelector('body'),
 		header: document.querySelector('header'),
 		forms: document.querySelectorAll("form"),
+		allDeskNumbers : document.querySelectorAll (".deskvsemployee .desk span"),
+		allDesk : document.querySelectorAll (".deskvsemployee "),
 		currentdate: document.querySelector("#currentdate"),
-		mainEmployeeNum: document.querySelector("#maindeskvsemployee .employee span"),
+		mainEmployeeNum: document.querySelector("#maindeskvsemployee .desk span"),
 		changefixedImg: document.querySelector("#changefixed img"),
-		fixedDeskStatus: document.querySelector("#select_user form label")
+		fixedDeskStatus: document.querySelector("#select_user form label"),
+
 	};
 
 	var app = {
 		init: function() {
 			handleForms.addSubmitListeners();
+			util.checkResultAndAdClass();
 			
 		}
 	};
@@ -32,7 +36,7 @@
 			var FD  = new FormData(this);
 
 			req.open("POST", "index.php");
-			req.onreadystatechange = function (aEvt) {
+			req.onreadystatechange = function (Evt) {
 				if (req.readyState == 4) {
 					if(req.status == 200) {
 					  	handleForms.checkWichForm(that);
@@ -46,7 +50,6 @@
 			return false;
 		},
 		checkWichForm : function (form) {
-			
 			if (form.innerHTML.indexOf("changeGoingOffice")>-1) {// going or not going to office
 				handleForms.changeCalState(form);
 			} 
@@ -58,44 +61,70 @@
 			};	
 		},
 		changeCalState :function(form) {
+
 			var plusOrMin = 0;
  
 			var buttonIndex = util.findElement (form,"button");
 			var imgIndex = util.findElement(form.children[buttonIndex],"img");
 
 			if (util.hasClass(form.parentElement,"emptydesk")) { //going to work
-				plusOrMin = 1;
+				plusOrMin = -1;
 				form.parentElement.classList.remove("emptydesk");
-				form.children[buttonIndex].children[imgIndex].src="images/deskperson.svg";
+				//form.children[buttonIndex].children[imgIndex].src="images/deskperson.svg";
 			} else {// change to not going to work
-				plusOrMin=-1;
+				plusOrMin=1;
 				form.parentElement.classList.add("emptydesk");
-				form.children[buttonIndex].children[imgIndex].src="images/deskpersonhome.svg";
+				//form.children[buttonIndex].children[imgIndex].src="images/deskpersonhome.svg";
 			}
-			if (htmlElements.currentdate.innerHTML.indexOf(form.children[buttonIndex].children[imgIndex-1].innerHTML)>-1) {//main date matches the changed date
-				var currentNumber = Number(htmlElements.mainEmployeeNum.innerHTML);
-				
-				currentNumber+=plusOrMin;
-				htmlElements.mainEmployeeNum.innerHTML=currentNumber;
-			};
+			// if (htmlElements.currentdate.innerHTML.indexOf(form.children[buttonIndex].children[0].innerHTML)>-1) {//main date matches the changed date
+			// 	var currentNumber = Number(htmlElements.mainEmployeeNum.innerHTML);
+			// 	// if (!handleForms.checkIfFixed()) {//not fixed desk
+			// 		currentNumber+=plusOrMin;
+			// 	// } else {
+			// 	// 	currentNumber-=plusOrMin;
+			// 	// }
+			// 	htmlElements.mainEmployeeNum.innerHTML=currentNumber;
+			// };
 			
-			var element = document.querySelector('#'+ form.parentElement.id +' .employee span');
+			var element = document.querySelector('#'+ form.parentElement.id +' .desk span');
 			var currentNumber2 = Number(element.innerHTML);
-			currentNumber2+=plusOrMin;
+			// if (!handleForms.checkIfFixed()) {//not fixed desk
+				currentNumber2+=plusOrMin;
+			// } else {
+			// 	currentNumber2-=plusOrMin;
+			// }
+			//currentNumber2+=plusOrMin;
 
 			element.innerHTML = currentNumber2; 
 					
 		},
+		checkIfFixed : function () {
+			if (htmlElements.fixedDeskStatus.innerHTML.indexOf("Not")> -1) {
+				handleForms.removeDeskFromAll(-1);
+				return false;
+			}
+			else {
+				handleForms.removeDeskFromAll(1);
+				return true;
+			}
+		},
+		removeDeskFromAll : function (plusOrMin) {
+			for (var i = 0; i < htmlElements.allDeskNumbers.length; i++) {
+				var newNumber = Number(htmlElements.allDeskNumbers[i].innerHTML)
+				newNumber+=plusOrMin;
+				htmlElements.allDeskNumbers[i].innerHTML = newNumber;
+			};
+		},
 		changeFixedState : function (form) {
 			
-			if (htmlElements.fixedDeskStatus.innerHTML.indexOf("Not")> -1) {
+			if (!handleForms.checkIfFixed()) {
 
 				htmlElements.fixedDeskStatus.innerHTML= "Fixed";
-				htmlElements.changefixedImg.src = "images/deskpersonlock.svg";
+				htmlElements.changefixedImg.src = "images/desklock.svg";
 			}
 			else {
 				htmlElements.fixedDeskStatus.innerHTML= "Not fixed";
-				htmlElements.changefixedImg.src = "images/deskpersonunlock.svg";
+				htmlElements.changefixedImg.src = "images/deskunlock.svg";
 			}
 		},
 		chooseUser:function(form) {
@@ -116,6 +145,18 @@
 				};
 				
 			};
+		},
+		checkResultAndAdClass : function () {
+			for (var i = htmlElements.allDeskNumbers.length - 1; i >= 0; i--) {
+				if (Number(htmlElements.allDeskNumbers[i].innerHTML)>-1) {
+					htmlElements.allDesk[i].classList.remove("negative");
+					htmlElements.allDesk[i].classList.add("positive");
+				} else {
+					htmlElements.allDesk[i].classList.add("negative");
+					htmlElements.allDesk[i].classList.remove("positive");
+				}
+				
+			}
 		}
 	}
 	app.init();

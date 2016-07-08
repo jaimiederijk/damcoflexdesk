@@ -120,6 +120,9 @@ header h1 {
 	color: #d7d7d7;
 	text-align: center;
 }
+#deskuserinput .week {
+	position:relative;
+}
 #deskuserinput .week > div  {
 	/*display: flex;*/
 }
@@ -138,7 +141,7 @@ header h1 {
 	border: none;
 	color: white;
 	text-align: left;
-	border-bottom: rgba(161, 161, 161, 0.38) solid 1px;
+	
 	background-color: #136bab;
 
 	/*background-color: black;*/ 
@@ -164,8 +167,15 @@ header h1 {
 	display: none;
 }
 #deskuserinput .weeknumber {
-	background-color: #919191;
-	/*border-top: #acacac solid 1rem;*/
+	width: 20%;
+    position: absolute;
+    left: 0;
+    transform-origin: left top;
+    transform: rotate(-90deg);
+    color: white;
+}
+#deskuserinput .monday {
+	border-top: #a7a7a7 solid;
 }
 #deskuserinput .weeknumber span {
 	margin-left: 0.5rem;

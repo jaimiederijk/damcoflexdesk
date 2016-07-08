@@ -210,8 +210,9 @@
     $result = "";
     //$week = 0;
     for ($i=0; $i < $weeks; $i++) {
-      $result = $result . "<div class='weeknumber'><span> Week: ".date('W',strtotime('+'.$i.' week', $today))."</span></div>";
+      
       $result = $result .  createWeekdays(strtotime('+'.$i.' week', $currentWeek),$conn);
+      $result = $result . "<div class='weeknumber'><span> Week: ".date('W',strtotime('+'.$i.' week', $today))."</span></div>";
     }
     return $result;
   }

@@ -25,7 +25,11 @@
 		addSubmitListeners : function () {
 			var formsLength = htmlElements.forms.length;
 			for (var i = 0; i < formsLength; i++) {
-				htmlElements.forms[i].addEventListener("submit",handleForms.processForm)
+				if (htmlElements.forms[i].addEventListener) {
+					htmlElements.forms[i].addEventListener("submit",handleForms.processForm);
+				} else if (htmlElements.forms[i].attachEvent) {
+					htmlElements.forms[i].attachEvent("submit",handleForms.processForm);
+				}
 			};
 		},
 		processForm : function (e) {

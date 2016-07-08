@@ -46,12 +46,16 @@ Here I will explain how I applied what we have learned.
 
 ## Asynchronous request
 
-I intercept all submits and send them to the procesForm function were the default behavior that results in a page refresh is stopped. A post request is created that sends the data from the form to the php. There the database is updated with the new value and in the javascript the changes in values are simulated until the page is refreshed. 
+I intercept all submits and send them to the procesForm function were the default behavior that results in a page refresh is stopped. A post request is created that sends the data from the form to the php. There the database is updated with the new value and in the javascript the changes in values are simulated until the page is refreshed. The submit listener is a example of feature detection.
 ```
 		addSubmitListeners : function () {
 			var formsLength = htmlElements.forms.length;
 			for (var i = 0; i < formsLength; i++) {
-				htmlElements.forms[i].addEventListener("submit",handleForms.processForm)
+				if (htmlElements.forms[i].addEventListener) {
+					htmlElements.forms[i].addEventListener("submit",handleForms.processForm);
+				} else if (htmlElements.forms[i].attachEvent) {
+					htmlElements.forms[i].attachEvent("submit",handleForms.processForm);
+				}
 			};
 		},
 		processForm : function (e) {

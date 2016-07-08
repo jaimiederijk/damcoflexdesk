@@ -1,5 +1,5 @@
 'use strict';
-//(function(){
+(function(){
 	var htmlElements = {
 		body: document.querySelector('body'),
 		header: document.querySelector('header'),
@@ -70,30 +70,19 @@
 			if (util.hasClass(form.parentElement,"emptydesk")) { //going to work
 				plusOrMin = -1;
 				form.parentElement.classList.remove("emptydesk");
-				//form.children[buttonIndex].children[imgIndex].src="images/deskperson.svg";
+				
 			} else {// change to not going to work
 				plusOrMin=1;
 				form.parentElement.classList.add("emptydesk");
-				//form.children[buttonIndex].children[imgIndex].src="images/deskpersonhome.svg";
+				
 			}
-			// if (htmlElements.currentdate.innerHTML.indexOf(form.children[buttonIndex].children[0].innerHTML)>-1) {//main date matches the changed date
-			// 	var currentNumber = Number(htmlElements.mainEmployeeNum.innerHTML);
-			// 	// if (!handleForms.checkIfFixed()) {//not fixed desk
-			// 		currentNumber+=plusOrMin;
-			// 	// } else {
-			// 	// 	currentNumber-=plusOrMin;
-			// 	// }
-			// 	htmlElements.mainEmployeeNum.innerHTML=currentNumber;
-			// };
+			
 			
 			var element = document.querySelector('#'+ form.parentElement.id +' .desk span');
 			var currentNumber2 = Number(element.innerHTML);
-			// if (!handleForms.checkIfFixed()) {//not fixed desk
-				currentNumber2+=plusOrMin;
-			// } else {
-			// 	currentNumber2-=plusOrMin;
-			// }
-			//currentNumber2+=plusOrMin;
+			
+			currentNumber2+=plusOrMin;
+			
 
 			element.innerHTML = currentNumber2; 
 					
@@ -160,4 +149,4 @@
 		}
 	}
 	app.init();
-//})();
+})();

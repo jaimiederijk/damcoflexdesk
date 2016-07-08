@@ -159,6 +159,10 @@ function createWeekdays($sundayTimeStamp,$conn) {
   }
 ```
 
+## SQL database
+First time that I have set up a SQL database. It seems to be very fast in returning results.
+![sql](images/readme/sql.png)
+
 ## Gather and parsing the calendars
 Most calendar apps allow the user to share their calendar. I'm using this functionality to get acces and get the data that I need. I store the calendar urls in a sql database. Using php I loop through all the users urls and see if there are any positive matches.
 The function below is the start of the search through the calendar.

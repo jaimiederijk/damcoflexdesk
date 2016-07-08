@@ -3,7 +3,9 @@
 ## The app
 
 The app is a tool that can help employees determine if they want to work from home or go to the office based on the availability of a working space. The app shows the number of desks available based on the number of people that are expected to go to the office. 
-[The app](http://jaimiederijk.nl/damco/)
+[Live version](http://jaimiederijk.nl/damco/)
+
+The app takes it's data from the users callendars. The callendars are gathered on the admin page and conected to the users. Every half hour a cronjob is run that reads these callendars and updates the app.
 
 ## Main functions
 
@@ -42,7 +44,38 @@ Here I will explain how I applied what we have learned.
 - Enhanced with javascript and css
 - Keyboard navigatable
 
+## Asynchronous request
 
+I intercept all submits and send them to the procesForm function were the default behavior that results in a page refresh is stopped. A post request is created that sends the data from the form to the php. There the database is updated with the new value and in the javascript the changes in values are simulated until the page is refreshed. 
+```
+		addSubmitListeners : function () {
+			var formsLength = htmlElements.forms.length;
+			for (var i = 0; i < formsLength; i++) {
+				htmlElements.forms[i].addEventListener("submit",handleForms.processForm)
+			};
+		},
+		processForm : function (e) {
+			e.preventDefault();
+			
+			var that=this;
+			var req = new XMLHttpRequest();
+			var FD  = new FormData(this);
+
+			req.open("POST", "index.php");
+			req.onreadystatechange = function (Evt) {
+				if (req.readyState == 4) {
+					if(req.status == 200) {
+					  	handleForms.checkWichForm(that);
+						
+					} else
+					  alert("Error loading page\n");
+				}
+			};
+			req.send(FD);
+
+			return false;
+		},
+```
 ## Gather and parsing the calendars
 Most calendar apps allow the user to share their calendar. I'm using this functionality to get acces and get the data that I need. I store the calendar urls in a sql database. Using php I loop through all the users urls and see if there are any positive matches.
 The function below is the start of the search through the calendar.

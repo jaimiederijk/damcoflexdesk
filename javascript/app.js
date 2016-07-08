@@ -17,6 +17,7 @@
 		init: function() {
 			handleForms.addSubmitListeners();
 			util.checkResultAndAdClass();
+			
 		}
 	};
 
@@ -35,7 +36,7 @@
 			var FD  = new FormData(this);
 
 			req.open("POST", "index.php");
-			req.onreadystatechange = function (aEvt) {
+			req.onreadystatechange = function (Evt) {
 				if (req.readyState == 4) {
 					if(req.status == 200) {
 					  	handleForms.checkWichForm(that);
@@ -49,7 +50,6 @@
 			return false;
 		},
 		checkWichForm : function (form) {
-			
 			if (form.innerHTML.indexOf("changeGoingOffice")>-1) {// going or not going to office
 				handleForms.changeCalState(form);
 			} 
@@ -61,6 +61,7 @@
 			};	
 		},
 		changeCalState :function(form) {
+
 			var plusOrMin = 0;
  
 			var buttonIndex = util.findElement (form,"button");
@@ -75,15 +76,15 @@
 				form.parentElement.classList.add("emptydesk");
 				//form.children[buttonIndex].children[imgIndex].src="images/deskpersonhome.svg";
 			}
-			if (htmlElements.currentdate.innerHTML.indexOf(form.children[buttonIndex].children[0].innerHTML)>-1) {//main date matches the changed date
-				var currentNumber = Number(htmlElements.mainEmployeeNum.innerHTML);
-				// if (!handleForms.checkIfFixed()) {//not fixed desk
-					currentNumber+=plusOrMin;
-				// } else {
-				// 	currentNumber-=plusOrMin;
-				// }
-				htmlElements.mainEmployeeNum.innerHTML=currentNumber;
-			};
+			// if (htmlElements.currentdate.innerHTML.indexOf(form.children[buttonIndex].children[0].innerHTML)>-1) {//main date matches the changed date
+			// 	var currentNumber = Number(htmlElements.mainEmployeeNum.innerHTML);
+			// 	// if (!handleForms.checkIfFixed()) {//not fixed desk
+			// 		currentNumber+=plusOrMin;
+			// 	// } else {
+			// 	// 	currentNumber-=plusOrMin;
+			// 	// }
+			// 	htmlElements.mainEmployeeNum.innerHTML=currentNumber;
+			// };
 			
 			var element = document.querySelector('#'+ form.parentElement.id +' .desk span');
 			var currentNumber2 = Number(element.innerHTML);

@@ -1,8 +1,8 @@
 * {
 	box-sizing: border-box;
 	/*padding: 0;
-	margin: 0;
-	outline: 1px solid lime;*/
+	margin: 0;*/
+	/*outline: 1px solid lime;*/
 }
 html {
 	width: 100%;
@@ -13,16 +13,34 @@ body {
 	font-family:'Roboto Condensed','Open Sans', 'Helvetica Neue', 'Arial', sans-serif;
 	margin: 0;
 }
+#wrapper {
+	max-width: 900px;
+    margin: auto;
+}
+button:focus {
+	outline-color: #ff7500;
+}
+button:hover {
+	cursor: pointer;
+	cursor: hand;
+}
 
 img {
 	width: 3em;
 }
 
 header h1 {
-	font-size: 1em;
+	font-size: 2em;
+    margin: 0.5rem;
 }
 
-
+.date {
+	background-color: black;
+    padding: 1rem;
+}
+#select_user {
+	text-align: center;
+}
 #select_user button {
 	background-color: rgb(61, 116, 128);
 	position: relative;
@@ -31,8 +49,10 @@ header h1 {
 #select_user button img {
 	width: 3rem;
 }
-#select_user h2 , #select_user form {
-	display: inline-block;
+#select_user h2  {
+	margin: 0;
+    background-color: #e0e2d4;
+    color: #2c7cb7;
 }
 #select_user form { 
 	margin-left: 1rem;
@@ -70,15 +90,17 @@ header h1 {
 #maindeskvsemployee {
 	/*background-color: blue;*/
 	width: 100%;
+	border: none;
 }
 #maindeskvsemployee .desk {
-	    position: relative;
+	position: relative;
     text-align: center;
+    margin-left: 20%;
 }
 #maindeskvsemployee img {
 	width: 2em;
-	    padding: 0 1rem;
-	    height: 2em;
+    padding: 0 1rem;
+    height: 2em;
     box-sizing: initial;
 	/*transform: scale(0.7);*/
 }
@@ -86,45 +108,89 @@ header h1 {
 	font-size: 2em;
 	color: white;
 }
+#maindeskvsemployee > div {
+	display: inline-block;
+	vertical-align: middle;
+}
 
 #deskuserinput h3 {
 	margin: 0;
 }
 #deskuserinput .desk {
-	color: white;
+	color: #d7d7d7;
 	text-align: center;
 }
 #deskuserinput .week > div  {
-	display: flex;
+	/*display: flex;*/
 }
 #deskuserinput .week > div > form {
-	width: 20%;
-	background-color: black;
+	/*width: 100%;
+	background-color: black;*/
 	margin: 0;
-	padding: 1rem 0;
+	/*padding: 1rem 0;*/
 }
 #deskuserinput .week > div > div {
-	width: 80%;
+	/*width: 80%;*/
 }
 #deskuserinput .week button {
 	width: 100%;
 	background-color: transparent;
 	border: none;
 	color: white;
+	text-align: left;
+	border-bottom: rgba(161, 161, 161, 0.38) solid 1px;
+	background-color: #136bab;
+
+	/*background-color: black;*/ 
+    margin: 0;
+    padding: 0;
 }
-#deskuserinput form {
-	border-left:#a3a3a3 solid 0.5rem;
+#deskuserinput button > div {
+	width: 20%;
+	display: inline-block;
+	vertical-align: middle;
+}
+#deskuserinput button > div:first-child {
+	background-color: black;
+	margin: 0;
+	padding: 0.5rem 0;
+	text-align: center;
+}
+#deskuserinput button .deskvsemployee {
+	width: 78%;
+
+}
+#deskuserinput .past {
+	display: none;
+}
+#deskuserinput .weeknumber {
+	background-color: #919191;
+	/*border-top: #acacac solid 1rem;*/
+}
+#deskuserinput .weeknumber span {
+	margin-left: 0.5rem;
+}
+#deskuserinput .deskvsemployee span {
+	font-weight: bold;
+	color: white;
+}
+#deskuserinput .emptydesk {
+	opacity: 0.5;
+}
+#deskuserinput .emptydesk .deskvsemployee  {
+	border-left: #d1d1d1 solid 0.5rem;
 }
 
-#deskuserinput .emptydesk form  {
-	border-left:#04a02b solid 0.5rem !important;
-}
 .emptydesk form button{
 	/*margin-left: -0.25rem;*/
 }
 .positive {
-	border-left: #c10000 solid 0.5rem;
+	border-left: #228b00 solid 0.5rem;
 }
 .negative {
 	border-left: #c10000 solid 0.5rem;
+}
+
+@media (max-width: 600px) { 
+
 }

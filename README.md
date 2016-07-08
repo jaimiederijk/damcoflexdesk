@@ -2,7 +2,8 @@
 
 ## The app
 
-The app is a tool that can help employees determine if they want to work from home or go to the office based on the availability of a working space. The app shows the number of desks available vs the number of people that are expected to go to the office based on the calendars of these people. 
+The app is a tool that can help employees determine if they want to work from home or go to the office based on the availability of a working space. The app shows the number of desks available based on the number of people that are expected to go to the office. 
+[The app](http://jaimiederijk.nl/damco/)
 
 ## Main functions
 
@@ -13,6 +14,34 @@ The app is a tool that can help employees determine if they want to work from ho
 - If the user with a positive match on that date has a fixed desk then increase the number of available desk.
 
 - Custom calendar within the app to quickly change user status.
+
+## Instalation
+I used [Xampp](https://www.apachefriends.org/index.html) to develop this website.
+It uses PHP and MySQL.
+
+- Clone or download this repo
+- Place the clone in the htdocs folder in your Xampp installation
+- In MySQL Create a database named 'damco' and import this [SQL file](damco (2).sql)
+- Change the connection.php to you own settings
+- Go to your Xampp localhost and here you will find the app.
+
+## Minor Everything web applied
+Here I will explain how I applied what we have learned.
+
+### Web App From Scratch
+- Asynchronous request in the javascript
+- Object Literal Pattern used in the javascript
+
+### CSS To The Rescue
+- Used Mobile First Design approach
+- Used semantic html.
+- Works in older browsers
+
+### Browser technologies
+- Basic functionality works in all cases (server side rendering via php)
+- Enhanced with javascript and css
+- Keyboard navigatable
+
 
 ## Gather and parsing the calendars
 Most calendar apps allow the user to share their calendar. I'm using this functionality to get acces and get the data that I need. I store the calendar urls in a sql database. Using php I loop through all the users urls and see if there are any positive matches.

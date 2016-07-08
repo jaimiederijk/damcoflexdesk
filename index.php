@@ -1,14 +1,7 @@
 <?php
   session_start();
 
-  // $servername = "10.3.0.63";
-  // $username = "jaapdzq3_jaimie";
-  // $password = "damcosecret";
-  // $dbname = "jaapdzq3_damco";
-  $servername = "localhost";
-  $username = "root";
-  $password = "damcosecret";
-  $dbname = "damco";
+  require 'php/connection.php';
   
   if (!isset($_SESSION["dateNumber"])) {
     $_SESSION["dateNumber"]=0;
@@ -217,7 +210,7 @@
     $result = "";
     //$week = 0;
     for ($i=0; $i < $weeks; $i++) {
-      // $result = $result . "<div class='weeknumber'><span> Week: ".date('W',strtotime('+'.$i.' week', $today))."</span></div>";
+      $result = $result . "<div class='weeknumber'><span> Week: ".date('W',strtotime('+'.$i.' week', $today))."</span></div>";
       $result = $result .  createWeekdays(strtotime('+'.$i.' week', $currentWeek),$conn);
     }
     return $result;
@@ -243,6 +236,9 @@
       } else if ($timestamp<strtotime('today')) {
         $className="past";
       }
+      if ($i == 0) {
+        $className=$className." monday";
+      }
       if(checkCustomCalendar($conn,$timestamp)) {
         $img="deskpersonhome.svg";
         $className=$className." emptydesk";
@@ -260,12 +256,18 @@
         <form method='post' action=".$action.">
           
           <input type='hidden' name='date' value=".$timestamp.">
-          <button type='submit' name='changeGoingOffice' value='change'><h3>".date('D',$timestamp)."</h3><span data-date=".date('d-m',$timestamp).">".date('d',$timestamp)."</span></button>
+          <button type='submit' name='changeGoingOffice' value='change'>
+            <div>
+              <h3>".date('D',$timestamp)."</h3>
+              <span data-date=".date('d-m',$timestamp).">".date('d',$timestamp)."</span>
+            </div>
+            <div class='deskvsemployee'>
+              <p class='desk'>available desk: <span>$freeDesk</span></p>
+              
+            </div>
+          </button>
         </form>
-        <div class='deskvsemployee'>
-          <div class='desk'><p>available desk: <span>$freeDesk</span></p></div>
-          
-        </div>
+        
       </div>";
     }
     return $result;
@@ -344,35 +346,43 @@ HTML;
     <link href='https://fonts.googleapis.com/css?family=Roboto+Condensed' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/app.css">
     <title>flexdesk</title>
+    <script>
+      'article aside footer header nav section time'.replace(/\w+/g,function(n){document.createElement(n)});
+    </script>
 
   </head>
   <body>
     <div id="wrapper">
 
-      <header>
-        <h1>Flexdesk occupancy </h1>
-        <nav><!-- <a href="settings.php">Settings<img src="images/gear_icon.svg" alt="menu"> -->
-          <!-- <a href="Flexdesksoccupancyapp.pdf">What is this app ?</a> -->
-        </nav>
-      </header>
       
-      <section class="date">
+      
+      
         <!-- <a href="?changeDay=prev" class=""><</a> -->
-        <?php echo "<span id='currentDate'> $currentDate </span>" ; ?>
+        
         <!-- <a href="?changeDay=next" class="">></a> -->
-        <!-- <a href="?changeDay=today" id="todaylink" class="">Today</a> -->
-      </section>
-      <section class="deskvsemployee" id="maindeskvsemployee" >
-        
-        <div class="desk"><?php echo "<span>$freeDesk</span>"; ?><img src="images/desk.svg"></div>
-        <!-- <div class="employee"><?php ; ?><img src="images/deskperson.svg"></div>echo "<span>$numberOfPeople</span>" -->
-<!-- <div class='weekdays'><span>Mon</span></div>
-                <div class='weekdays'><span>Tue</span></div>
-                <div class='weekdays'><span>Wed</span></div>
-                <div class='weekdays'><span>Thu</span></div>
-                <div class='weekdays'><span>Fri</span></div> -->
-        
-      </section>
+        <!-- <a href="?changeDay=today" id="todaylink" class="">Today</a><a href="settings.php">Settings<img src="images/gear_icon.svg" alt="menu"> -->
+      
+      <?php
+        if(!isset($_COOKIE["user_id"])) {
+          echo
+          "<header>
+            <h1>Flexdesk occupancy </h1>
+            <nav>
+              
+            </nav>
+          </header>
+          
+          <section class='deskvsemployee' id='maindeskvsemployee'>
+            <div class='date'>
+              <span id='currentDate'> $currentDate </span>
+            </div>
+            <div class='desk'><span>$freeDesk</span><img src='images/desk.svg'></div>
+            
+            
+          </section>";
+        }
+            
+      ?>
       <section id="usercal">
         <section id="select_user">
           
